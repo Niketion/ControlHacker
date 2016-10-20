@@ -1,0 +1,52 @@
+#
+# Inv-ControlHacker by Niketion - (Inv) - (Open Source)
+# GitHub: github.com/Niketion/Inv-ControlHacker
+# Version: 0.1a
+#
+
+prefix:
+  prefixNormal: '&6&l> &e'
+  prefixError: '&4&l> &c'
+  prefixOther: '&7> '
+
+command:
+  message:
+    noConsole: '&cOnly player can utilized this command.'
+    noPermission: '&cPermission denied. &7(inv.nik.controlhacker.*)'
+    argsNotFound: '&eArgs not found...'
+    usageControl: '&7/control <player> - Control a player.'
+    usageSetLocation: '/setlocation <args> - Set a location for control. <args> = "staffer" or "hacker"'
+    playerNotFound: '&ePlayer not found...'
+    controlSelf: '&cYou can''t control yourself!'
+    hackerTeleported: '&eThe hacker is teleported to zone! Start the control.'
+    alertHacker: |-
+      &cWARNING! &7Give contact
+      &7to staffer!
+    cmdDisabled: '&cYou can''t execute this command on a control!'
+    noControlPlayer: '&cThe player isn''t in a control.'
+    controlFinish: '&eControl finished.'
+
+#
+# Variables
+# %p = Hacker name
+#
+
+    quitControl: '&c&lWARNING: &eThe player %p left the game in a control.'
+  command:
+    afterControl: '/spawn'
+  boolean:
+    controlOtherStaffer: false #False = I don't control other staffer.
+    message: '&cYou can''t control other staffer!'
+
+event:
+  breakBlock: '&cYou can''t destroy block in a control!'
+
+#
+# Variables
+# %p = Hacker name
+# %msg = Message
+#
+
+chat:
+  format:
+    hacker: '&c&lCONTROL &7%p: %msg'
