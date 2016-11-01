@@ -1,52 +1,54 @@
 #
-# Inv-ControlHacker by Niketion - (Inv) - (Open Source)
-# GitHub: github.com/Niketion/Inv-ControlHacker
-# Version: 0.1a
+# Niketion (InventionTeam) - ControlHacker
+# OpenSource: github.com/Niketion/ControlHacker
+#
+
+version-config: 0.2a # Don't touch
+
+#
+#
 #
 
 prefix:
-  prefixNormal: '&6&l> &e'
-  prefixError: '&4&l> &c'
-  prefixOther: '&7> '
-
-command:
-  message:
-    noConsole: '&cOnly player can utilized this command.'
-    noPermission: '&cPermission denied. &7(inv.nik.controlhacker.*)'
-    argsNotFound: '&eArgs not found...'
-    usageControl: '&7/control <player> - Control a player.'
-    usageSetLocation: '/setlocation <args> - Set a location for control. <args> = "staffer" or "hacker"'
-    playerNotFound: '&ePlayer not found...'
-    controlSelf: '&cYou can''t control yourself!'
-    hackerTeleported: '&eThe hacker is teleported to zone! Start the control.'
-    alertHacker: |-
-      &cWARNING! &7Give contact
-      &7to staffer!
-    cmdDisabled: '&cYou can''t execute this command on a control!'
-    noControlPlayer: '&cThe player isn''t in a control.'
-    controlFinish: '&eControl finished.'
-
-#
-# Variables
-# %p = Hacker name
-#
-
-    quitControl: '&c&lWARNING: &eThe player %p left the game in a control.'
-  command:
-    afterControl: '/spawn'
-  boolean:
-    controlOtherStaffer: false #False = I don't control other staffer.
-    message: '&cYou can''t control other staffer!'
-
-event:
-  breakBlock: '&cYou can''t destroy block in a control!'
-
-#
-# Variables
-# %p = Hacker name
-# %msg = Message
-#
-
-chat:
-  format:
-    hacker: '&c&lCONTROL &7%p: %msg'
+  prefix-normal: '&6&l> &e'
+  prefix-error: '&4&l> &c'
+permissions:
+  denied: '&cPermission denied. &7(inv.nik.controlhacker.*)'
+commands:
+  args:
+    not-found: |-
+      &cArgs not found...
+      &7> /ch reload - Reload Config.yml.
+      &7> /ch setlocation (hacker/staffer/endcontrol) - Set location of control.
+      &7> /control <player> - Control a player.
+  player:
+    not-found: '&ePlayer not found...'
+    not-controlled: '&ePlayer isn''t in a control.'
+    staffer-equals-hacker: '&cYou can''t control yourself.'
+    hacker-is-staffer: '&cYou can''t control other staffer.'
+    no-console: '&cThis command is executable by player.'
+    already-control: '&cPlayer is already in a control.'
+    start-control:
+      staffer: '&eThe control started: %player%!'
+      hacker:
+        title: ''
+        subtitle: '&cControl &lHACK&7 by %staffer%!'
+        fade-in: 10
+        fade-out: 10
+    finish-control:
+      staffer: '&eThe control finished: %player%!'
+      teleport-hacker: '&eControl ended. You''re teleport to spawn by %staffer%'
+    sound:
+      finish-control:
+        hacker: LEVEL_UP
+      start-control:
+        hacker: NOTE_BASS
+        staffer: NOTE_PLING
+control:
+  command-deny: '&cThe commands aren''t allowed in a control.'
+  command-in-control: false
+  block-break-in-control: false
+  block-place-in-control: false
+  entity-damage-in-control: false
+  teleport-in-control: false
+  drop-item-in-control: false

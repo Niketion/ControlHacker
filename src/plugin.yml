@@ -1,4 +1,22 @@
-name: Invention-ControlHacker
-version: 0.1a
-author: InvTeam-Niketion
-main: invention.nik.controlhacker.Main
+name: ControlHacker
+author: Niketion
+version: 0.2a
+main: it.niketion.controlhacker.Main
+softdepends: [TitleManager]
+commands:
+  controlhacker:
+    aliases: ch
+    description: A command of ControlHacker.
+    usage: /<command> <arg> <arg>
+  control:
+    description: A command of ControlHacker.
+    usage: /<command> <player>
+  finish:
+    description: A command of ControlHacker.
+    usage: /<command> <player>
+permissions:
+  inv.nik.controlhacker.*:
+    children:
+      inv.nik.controlhacker.operator: true
+  inv.nik.controlhacker.operator:
+    default: op
