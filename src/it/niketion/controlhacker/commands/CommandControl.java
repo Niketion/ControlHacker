@@ -37,11 +37,14 @@ public class CommandControl implements CommandExecutor {
                 if (hacker != null) {
                     if (sender instanceof Player) {
                         if (sender != hacker) {
-                            if (hacker.hasPermission("inv.nik.controlhacker.mod")) {
+                            if (!hacker.hasPermission("inv.nik.controlhacker.mod")) {
                                 if (!fuctions.hasPlayerControl(hacker.getName())) {
-                                    fuctions.addPlayerControl(hacker.getName());
-                                    controlStart(hacker, (Player) sender);
-                                    return true;
+                                    if (controlStart(hacker, (Player) sender)) {
+                                        fuctions.addPlayerControl(hacker.getName());
+                                        return true;
+                                    } else {
+                                        return true;
+                                    }
                                 } else {
                                     sender.sendMessage(prefixError + alreadyControl);
                                     return true;
@@ -101,7 +104,7 @@ public class CommandControl implements CommandExecutor {
     private String prefixNormal = main.getConfig().getString(format("prefix.prefix-normal")).replaceAll("&", "§");
     private String prefixError = main.getConfig().getString(format("prefix.prefix-error")).replaceAll("&", "§");
 
-    private void controlStart(Player hacker, Player staffer) {
+    private boolean controlStart(Player hacker, Player staffer) {
         try {
             FileConfiguration config = CommandControlHacker.getLocationConfig();
             if (config.getString("staffer.World") != null) {
@@ -137,20 +140,26 @@ public class CommandControl implements CommandExecutor {
                                     .setFadeOut(main.getConfig().getInt("commands.player.start-control.hacker.fade-out"))
                                     .setStay(999999999)
                                     .send(hacker);
+                            return true;
                         }
+                        return true;
                     } else {
                         staffer.sendMessage(prefixError + "Location of ENDControl not set.");
+                        return false;
                     }
                 } else {
                     staffer.sendMessage(prefixError + "Location of HACKER not set.");
+                    return false;
                 }
             } else {
                 staffer.sendMessage(prefixError + "Location of STAFFER not set.");
+                return false;
             }
         } catch (Exception e) {
             staffer.sendMessage(prefixError + "Error: View console.");
             main.getLogger().log(Level.WARNING, "Error: Control can't started. You've edited the controllocation?");
             main.getLogger().log(Level.WARNING, "Problem with sounds? Check sounds here: http://docs.codelanx.com/Bukkit/1.8/org/bukkit/Sound.html");
+            return false;
         }
     }
 

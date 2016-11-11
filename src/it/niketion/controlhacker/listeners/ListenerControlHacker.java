@@ -2,17 +2,21 @@ package it.niketion.controlhacker.listeners;
 
 import it.niketion.controlhacker.Fuctions;
 import it.niketion.controlhacker.Main;
+import it.niketion.controlhacker.commands.CommandFinish;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.*;
 
 import java.util.logging.Level;
 
@@ -38,6 +42,49 @@ public class ListenerControlHacker implements Listener {
                     event.getPlayer().sendMessage(prefixError + noCommands);
                     return;
                 }
+            }
+        } catch (Exception e) {
+            if (!getNoErrors()) {
+                messageError();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        try {
+            if (fuctions.hasPlayerControl(event.getPlayer().getName())) {
+                fuctions.removePlayerControl(event.getPlayer().getName());
+                CommandFinish.finishControl(event.getPlayer(), Bukkit.getConsoleSender(), main);
+                for (Player mod : Bukkit.getOnlinePlayers()) {
+                    if (mod.hasPermission("inv.nik.controlhacker.mod")) {
+                        mod.sendMessage(prefixError + playerQuit.replaceAll("%player%", event.getPlayer().getName()));
+                    }
+                }
+                return;
+            }
+        } catch (Exception e) {
+            if (!getNoErrors()) {
+                messageError();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+        try {
+            if (fuctions.hasPlayerControl(event.getPlayer().getName())) {
+                event.setCancelled(true);
+                for (Player mod : Bukkit.getOnlinePlayers()) {
+                    if (mod.hasPermission("inv.nik.controlhacker.mod")) {
+                        if (mod.getWorld().getName().equalsIgnoreCase("hacker.World")) {
+                            mod.sendMessage(formatChatControl.replaceAll("%player%", event.getPlayer().getName())
+                                    .replaceAll("%message%", event.getMessage()));
+                        }
+                    }
+                }
+                event.getPlayer().sendMessage(formatChatControl.replaceAll("%player%", event.getPlayer().getName())
+                        .replaceAll("%message%", event.getMessage()));
             }
         } catch (Exception e) {
             if (!getNoErrors()) {
@@ -125,6 +172,16 @@ public class ListenerControlHacker implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(final EntityDeathEvent event) {
+        Entity entity = event.getEntity();
+        EntityDamageEvent lastDamage = entity.getLastDamageCause();
+        EntityDamageEvent.DamageCause cause = lastDamage.getCause();
+        if (entity instanceof Player && cause == EntityDamageEvent.DamageCause.VOID) {
+            //Altro
+        }
+    }
+
     //
     //
     //
@@ -159,4 +216,6 @@ public class ListenerControlHacker implements Listener {
 
     private String prefixError = main.getConfig().getString(format("prefix.prefix-error")).replaceAll("&", "§");
     private String noCommands = main.getConfig().getString(format("control.command-deny")).replaceAll("&", "§");
+    private String playerQuit = main.getConfig().getString(format("control.quit-control")).replaceAll("&", "§");
+    private String formatChatControl = main.getConfig().getString(format("control.format-chat")).replaceAll("&", "§");
 }

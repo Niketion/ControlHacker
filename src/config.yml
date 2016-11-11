@@ -46,6 +46,8 @@ commands:
         staffer: NOTE_PLING
 control:
   command-deny: '&cThe commands aren''t allowed in a control.'
+  quit-control: '&c%player% quit in a control!'
+  format-chat: '&c&lCONTROL &7%player%: &f%message%'
   command-in-control: false
   block-break-in-control: false
   block-place-in-control: false
