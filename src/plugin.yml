@@ -1,6 +1,6 @@
 name: ControlHacker
 author: Niketion
-version: 0.2a
+version: 0.3a
 main: it.niketion.controlhacker.Main
 softdepends: [TitleManager]
 commands:
