@@ -12,6 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.logging.Level;
 
@@ -34,12 +35,17 @@ public class CommandFinish implements CommandExecutor {
             if (args.length > 0) {
                 Player hacker = Bukkit.getPlayerExact(args[0]);
                 if (hacker != null) {
-                    if (fuctions.hasPlayerControl(hacker.getName())) {
-                        fuctions.removePlayerControl(hacker.getName());
-                        finishControl(hacker, sender, main);
-                        return true;
+                    if (sender.hasPermission("inv.nik.controlhacker.mod")) {
+                        if (fuctions.hasPlayerControl(hacker.getName())) {
+                            fuctions.removePlayerControl(hacker.getName());
+                            finishControl(hacker, sender, main);
+                            return true;
+                        } else {
+                            sender.sendMessage(prefixNormal + playerNotControlled);
+                            return true;
+                        }
                     } else {
-                        sender.sendMessage(prefixNormal + playerNotControlled);
+                        sender.sendMessage(prefixError + permissionDenied);
                         return true;
                     }
                 } else {
@@ -115,4 +121,5 @@ public class CommandFinish implements CommandExecutor {
     private String playerNotFound = main.getConfig().getString(format("commands.player.not-found")).replaceAll("&", "§");
     private String playerNotControlled = main.getConfig().getString(format("commands.player.not-controlled")).replaceAll("&", "§");
     private static String soundFinishControl = main.getConfig().getString(format("commands.player.sound.finish-control.hacker"));
+    private String permissionDenied = main.getConfig().getString(format("permissions.denied")).replaceAll("&", "§");
 }

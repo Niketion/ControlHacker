@@ -1,6 +1,6 @@
 name: ControlHacker
 author: Niketion
-version: 0.3a
+version: 0.3b
 main: it.niketion.controlhacker.Main
 softdepends: [TitleManager]
 commands:
@@ -18,5 +18,8 @@ permissions:
   inv.nik.controlhacker.*:
     children:
       inv.nik.controlhacker.operator: true
+      inv.nik.controlhacker.mod: true
   inv.nik.controlhacker.operator:
+    default: op
+  inv.nik.controlhacker.mod:
     default: op

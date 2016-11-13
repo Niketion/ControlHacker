@@ -13,6 +13,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.logging.Level;
 
@@ -37,20 +39,25 @@ public class CommandControl implements CommandExecutor {
                 if (hacker != null) {
                     if (sender instanceof Player) {
                         if (sender != hacker) {
-                            if (!hacker.hasPermission("inv.nik.controlhacker.mod")) {
-                                if (!fuctions.hasPlayerControl(hacker.getName())) {
-                                    if (controlStart(hacker, (Player) sender)) {
-                                        fuctions.addPlayerControl(hacker.getName());
-                                        return true;
+                            if (sender.hasPermission("inv.nik.controlhacker.mod")) {
+                                if (!hacker.hasPermission("inv.nik.controlhacker.mod")) {
+                                    if (!fuctions.hasPlayerControl(hacker.getName())) {
+                                        if (controlStart(hacker, (Player) sender)) {
+                                            fuctions.addPlayerControl(hacker.getName());
+                                            return true;
+                                        } else {
+                                            return true;
+                                        }
                                     } else {
+                                        sender.sendMessage(prefixError + alreadyControl);
                                         return true;
                                     }
                                 } else {
-                                    sender.sendMessage(prefixError + alreadyControl);
+                                    sender.sendMessage(prefixError + hackerIsStaffer);
                                     return true;
                                 }
                             } else {
-                                sender.sendMessage(prefixError + hackerIsStaffer);
+                                sender.sendMessage(prefixError + permissionDenied);
                                 return true;
                             }
                         } else {
@@ -171,4 +178,5 @@ public class CommandControl implements CommandExecutor {
     private String hackerIsStaffer = main.getConfig().getString(format("commands.player.hacker-is-staffer")).replaceAll("&", "§");
     private String soundStartControlHacker = main.getConfig().getString("commands.player.sound.start-control.hacker");
     private String soundStartControlStaffer = main.getConfig().getString("commands.player.sound.start-control.staffer");
+    private String permissionDenied = main.getConfig().getString(format("permissions.denied")).replaceAll("&", "§");
 }

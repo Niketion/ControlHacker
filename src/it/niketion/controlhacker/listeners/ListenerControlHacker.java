@@ -2,10 +2,12 @@ package it.niketion.controlhacker.listeners;
 
 import it.niketion.controlhacker.Fuctions;
 import it.niketion.controlhacker.Main;
+import it.niketion.controlhacker.commands.CommandControlHacker;
 import it.niketion.controlhacker.commands.CommandFinish;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +17,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 import java.util.logging.Level;
@@ -73,11 +74,12 @@ public class ListenerControlHacker implements Listener {
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         try {
+            FileConfiguration config = CommandControlHacker.getLocationConfig();
             if (fuctions.hasPlayerControl(event.getPlayer().getName())) {
                 event.setCancelled(true);
                 for (Player mod : Bukkit.getOnlinePlayers()) {
                     if (mod.hasPermission("inv.nik.controlhacker.mod")) {
-                        if (mod.getWorld().getName().equalsIgnoreCase("hacker.World")) {
+                        if (mod.getWorld().getName().equalsIgnoreCase(config.getString("hacker.World"))) {
                             mod.sendMessage(formatChatControl.replaceAll("%player%", event.getPlayer().getName())
                                     .replaceAll("%message%", event.getMessage()));
                         }
@@ -94,7 +96,7 @@ public class ListenerControlHacker implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event ) {
+    public void onBlockBreak(BlockBreakEvent event) {
         try {
             if (!main.getConfig().getBoolean("control.block-break-in-control")) {
                 if (fuctions.hasPlayerControl(event.getPlayer().getName())) {
@@ -110,7 +112,7 @@ public class ListenerControlHacker implements Listener {
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event ) {
+    public void onBlockPlace(BlockPlaceEvent event) {
         try {
             if (!main.getConfig().getBoolean("control.block-place-in-control")) {
                 if (fuctions.hasPlayerControl(event.getPlayer().getName())) {

@@ -32,6 +32,7 @@ public class CommandControlHacker implements CommandExecutor {
     public static File getLocationFile() {
         return locationFile;
     }
+
     public static FileConfiguration getLocationConfig() {
         return locationConfig;
     }
@@ -43,53 +44,58 @@ public class CommandControlHacker implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (getNoErrors()) {
-            if (args.length > 0) {
-                if (args[0].equalsIgnoreCase("reload")) {
-                    if (sender.hasPermission("inv.nik.controlhacker.operator")) {
-                        main.reloadConfig();
-                        main.getLogger().log(Level.FINE, "Config reloaded.");
+            if (sender.hasPermission("inv.nik.controlhacker.operator")) {
+                if (args.length > 0) {
+                    if (args[0].equalsIgnoreCase("reload")) {
+                        if (sender.hasPermission("inv.nik.controlhacker.operator")) {
+                            main.reloadConfig();
+                            main.getLogger().log(Level.FINE, "Config reloaded.");
 
-                        sender.sendMessage(prefixNormal + "Config reloaded.");
-                        return true;
-                    } else {
-                        sender.sendMessage(prefixError + permissionDenied);
-                        return true;
-                    }
-                } else if (args[0].equalsIgnoreCase("setlocation")) {
-                    if (sender instanceof Player) {
-                        if (args[1].equalsIgnoreCase("hacker")) {
-                            if (setLocationControl((Player) sender, "hacker")) {
-                                setLocationControl((Player) sender, "hacker");
-                                sender.sendMessage(prefixNormal + "Location of HACKER set.");
-                                return true;
+                            sender.sendMessage(prefixNormal + "Config reloaded.");
+                            return true;
+                        } else {
+                            sender.sendMessage(prefixError + permissionDenied);
+                            return true;
+                        }
+                    } else if (args[0].equalsIgnoreCase("setlocation")) {
+                        if (sender instanceof Player) {
+                            if (args[1].equalsIgnoreCase("hacker")) {
+                                if (setLocationControl((Player) sender, "hacker")) {
+                                    setLocationControl((Player) sender, "hacker");
+                                    sender.sendMessage(prefixNormal + "Location of HACKER set.");
+                                    return true;
+                                } else {
+                                    main.getLogger().log(Level.WARNING, "Error: File location not found...");
+                                    return true;
+                                }
+                            } else if (args[1].equalsIgnoreCase("staffer")) {
+                                if (setLocationControl((Player) sender, "staffer")) {
+                                    setLocationControl((Player) sender, "staffer");
+                                    sender.sendMessage(prefixNormal + "Location of STAFFER set.");
+                                    return true;
+                                } else {
+                                    main.getLogger().log(Level.WARNING, "Error: File location not found...");
+                                    return true;
+                                }
+                            } else if (args[1].equalsIgnoreCase("endcontrol")) {
+                                if (setLocationControl((Player) sender, "endcontrol")) {
+                                    setLocationControl((Player) sender, "endcontrol");
+                                    sender.sendMessage(prefixNormal + "Location of ENDControl set.");
+                                    return true;
+                                } else {
+                                    main.getLogger().log(Level.WARNING, "Error: File location not found...");
+                                    return true;
+                                }
                             } else {
-                                main.getLogger().log(Level.WARNING, "Error: File location not found...");
-                                return true;
-                            }
-                        } else if (args[1].equalsIgnoreCase("staffer")) {
-                            if (setLocationControl((Player) sender, "staffer")) {
-                                setLocationControl((Player) sender, "staffer");
-                                sender.sendMessage(prefixNormal + "Location of STAFFER set.");
-                                return true;
-                            } else {
-                                main.getLogger().log(Level.WARNING, "Error: File location not found...");
-                                return true;
-                            }
-                        } else if (args[1].equalsIgnoreCase("endcontrol")) {
-                            if (setLocationControl((Player) sender, "endcontrol")) {
-                                setLocationControl((Player) sender, "endcontrol");
-                                sender.sendMessage(prefixNormal + "Location of ENDControl set.");
-                                return true;
-                            } else {
-                                main.getLogger().log(Level.WARNING, "Error: File location not found...");
+                                sender.sendMessage(prefixError + argsNotFound);
                                 return true;
                             }
                         } else {
-                            sender.sendMessage(prefixError + argsNotFound);
+                            sender.sendMessage(prefixError + noConsole);
                             return true;
                         }
                     } else {
-                        sender.sendMessage(prefixError + noConsole);
+                        sender.sendMessage(prefixError + argsNotFound);
                         return true;
                     }
                 } else {
@@ -97,7 +103,7 @@ public class CommandControlHacker implements CommandExecutor {
                     return true;
                 }
             } else {
-                sender.sendMessage(prefixError + argsNotFound);
+                sender.sendMessage(prefixError + permissionDenied);
                 return true;
             }
         } else {
