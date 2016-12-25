@@ -1,25 +1,29 @@
-name: ControlHacker
 author: Niketion
-version: 0.3b
-main: it.niketion.controlhacker.Main
-softdepends: [TitleManager]
+version: 4.0
+main: it.nik.controlhacker.Main
+name: ControlHacker
+softdepend: [TitleManager]
 commands:
   controlhacker:
-    aliases: ch
     description: A command of ControlHacker.
     usage: /<command> <arg> <arg>
+    aliases: ch
   control:
     description: A command of ControlHacker.
-    usage: /<command> <player>
+    usage: /<command> <arg>
+    aliases: controllo
   finish:
     description: A command of ControlHacker.
-    usage: /<command> <player>
+    usage: /<command> <arg>
+    aliases: termina
+  report:
+    description: A command of ControlHacker.
+    usage: /<command> <arg> <arg>
+    aliases: segnala
 permissions:
-  inv.nik.controlhacker.*:
+  controlhacker.admin:
     children:
-      inv.nik.controlhacker.operator: true
-      inv.nik.controlhacker.mod: true
-  inv.nik.controlhacker.operator:
+      controlhacker.mod: true
     default: op
-  inv.nik.controlhacker.mod:
+  controlhacker.mod:
     default: op

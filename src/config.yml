@@ -1,56 +1,65 @@
 #
-# Niketion (InventionTeam) - ControlHacker
+# Niketion - ControlHacker
 # OpenSource: github.com/Niketion/ControlHacker
 #
 
-version-config: 0.2a # Don't touch
+Version-Config: 4.0 # Don't touch
+
+Chat:
+  Prefix: '&9ControlHacker>'
+  Permission-Denied: '&7You don''t have permission.'
+  Player-Not-Found: '&6%player%&7 not found...'
+  Usage-Control: '&7Usage: /<command> <player>'
+  Control-Yourself: '&7You can''t control yourself...'
+  Already-Control: '&7Player is already in a control.'
+  Start-Control:
+    Staffer: '&7Ok, start the control to %player%'
+    Hacker: |-
+      &4&lALERT! &7The control is started by &d%player%!
+      &7Give contact and don't quit the game!
+  End-Control:
+    Staffer: '&d%player%&7 is teleported to zone of endcontrol.'
+    Hacker: '&7Thanks for the patience, control completed. You''re teleported at the spawn by &b%player%&7.'
+  Quit: '&c%player%&7 is quit by a control.'
+  Player-Not-Controlled: '&e%player%&7 isn''t in a control!'
+
+Event:
+  Format-Control: '&4&lCONTROL &7%player%: %message%'
+  Command-Blocked: '&7All commands are disabled in the control.'
+  Block-Break: false
+  Block-Place: false
+  Teleport: false
+  Drop-Item: false
+  Bow: false
+  God: true
+
+Report:
+  Cooldown: 30 # seconds
+  Cooldown-Message: '&7Wait &d%number% &7seconds...'
+  Prefix: '&9Report>'
+  Report-Message: |-
+    &2&l&m=============================================
+    &9Report> &7New report:
+     &d%reported% &7is reported by &b%player%&7.
+     &7Reason: &c%reason%
+    &2&l&m=============================================
+  Report-Usage: '&7Usage: /report <player> <text>'
+  Report-Yourself: '&7You can''t report yourself...'
+  Thanks-For-Report: '&7Thanks for reporting &d%player%&7.'
 
 #
-#
+# Sound list:
+#   1.8: http://docs.codelanx.com/Bukkit/1.8/org/bukkit/Sound.html
+#   1.9+: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 #
 
-prefix:
-  prefix-normal: '&6&l> &e'
-  prefix-error: '&4&l> &c'
-permissions:
-  denied: '&cPermission denied. &7(inv.nik.controlhacker.*)'
-commands:
-  args:
-    not-found: |-
-      &cArgs not found...
-      &7> /ch reload - Reload Config.yml.
-      &7> /ch setlocation (hacker/staffer/endcontrol) - Set location of control.
-      &7> /control <player> - Control a player.
-  player:
-    not-found: '&ePlayer not found...'
-    not-controlled: '&ePlayer isn''t in a control.'
-    staffer-equals-hacker: '&cYou can''t control yourself.'
-    hacker-is-staffer: '&cYou can''t control other staffer.'
-    no-console: '&cThis command is executable by player.'
-    already-control: '&cPlayer is already in a control.'
-    start-control:
-      staffer: '&eThe control started: %player%!'
-      hacker:
-        title: ''
-        subtitle: '&cControl &lHACK&7 by %staffer%!'
-        fade-in: 10
-        fade-out: 10
-    finish-control:
-      staffer: '&eThe control finished: %player%!'
-      teleport-hacker: '&eControl ended. You''re teleport to spawn by %staffer%'
-    sound:
-      finish-control:
-        hacker: LEVEL_UP
-      start-control:
-        hacker: NOTE_BASS
-        staffer: NOTE_PLING
-control:
-  command-deny: '&cThe commands aren''t allowed in a control.'
-  quit-control: '&c%player% quit in a control!'
-  format-chat: '&c&lCONTROL &7%player%: &f%message%'
-  command-in-control: false
-  block-break-in-control: false
-  block-place-in-control: false
-  entity-damage-in-control: false
-  teleport-in-control: false
-  drop-item-in-control: false
+Sound:
+  Start-Control: note-pling
+  End-Control: note-bass
+
+Title:
+  Start-Control:
+    Title: '&4&lCONTROL!'
+    SubTitle: '&7by &c%player%'
+
+
