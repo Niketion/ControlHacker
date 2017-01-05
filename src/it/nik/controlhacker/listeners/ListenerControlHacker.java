@@ -54,6 +54,7 @@ public class ListenerControlHacker implements Listener {
                                 .toUpperCase().replaceAll("-", "_")), 1, 0);
                     } catch (NullPointerException ignored) {
                     }
+                    Fuctions.getInstance().finishControl(event.getPlayer(), Bukkit.getConsoleSender());
                 }
             }
         }
@@ -89,8 +90,11 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent event) {
-        if (isOnControl((Player) event.getEntity())) {
-            event.setCancelled(!getConfigBoolean("Event.Bow"));
+        try {
+            if (isOnControl((Player) event.getEntity())) {
+                event.setCancelled(!getConfigBoolean("Event.Bow"));
+            }
+        } catch (ClassCastException ignored) {
         }
     }
 

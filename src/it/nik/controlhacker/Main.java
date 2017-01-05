@@ -1,10 +1,8 @@
 package it.nik.controlhacker;
 
-import it.nik.controlhacker.commands.CommandControl;
-import it.nik.controlhacker.commands.CommandControlHacker;
-import it.nik.controlhacker.commands.CommandFinish;
-import it.nik.controlhacker.commands.CommandReport;
+import it.nik.controlhacker.commands.*;
 import it.nik.controlhacker.files.FileLocation;
+import it.nik.controlhacker.files.FileReport;
 import it.nik.controlhacker.listeners.ListenerControlHacker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,7 +52,7 @@ public class Main extends JavaPlugin {
 
     private boolean getNoErrors() {
         if (String.valueOf(getDescription().getAuthors()).equals("[Niketion]")
-                || getDescription().getVersion().equalsIgnoreCase("4.0")
+                || getDescription().getVersion().equalsIgnoreCase("4.1")
                 || pluginManager.isPluginEnabled("ControlHacker")) {
             return true;
         } else {
@@ -70,6 +68,7 @@ public class Main extends JavaPlugin {
             getCommand("controlhacker").setExecutor(new CommandControlHacker());
             getCommand("control").setExecutor(new CommandControl());
             getCommand("finish").setExecutor(new CommandFinish());
+            getCommand("listreports").setExecutor(new CommandListReports());
 
             pluginManager.registerEvents(new ListenerControlHacker(), this);
 
@@ -83,10 +82,14 @@ public class Main extends JavaPlugin {
 
     private boolean loadConfig() {
         try {
-            if (getConfig().getString("Version-Config").equalsIgnoreCase("4.0")) {
+            if (getConfig().getString("Version-Config").equalsIgnoreCase("4.1")) {
                 getConfig().options().copyDefaults(true);
+
                 FileLocation fileLocation = FileLocation.getInstance();
+                FileReport fileReport = FileReport.getInstance();
+
                 fileLocation.getLocationConfig().save(fileLocation.getLocationFile());
+                fileReport.getConfig().save(fileReport.getFile());
 
                 if (!new File(getDataFolder(), "config.yml").exists()) {
                     saveResource("config.yml", false);
@@ -94,6 +97,14 @@ public class Main extends JavaPlugin {
                 if (!new File(getDataFolder(), "location.yml").exists()) {
                     saveResource("location.yml", false);
                 }
+                if (!new File(getDataFolder(), "reports.yml").exists()) {
+                    saveResource("reports.yml", false);
+                }
+
+                if (fileReport.getConfig().getString("MaxID") == null) {
+                    fileReport.getConfig().set("MaxID", "0");
+                }
+
                 return true;
             } else {
                 formatMessageError("Version of the 'config.yml' not right, delete here");

@@ -1,10 +1,12 @@
 package it.nik.controlhacker.commands;
 
 import it.nik.controlhacker.Main;
+import it.nik.controlhacker.files.FileReport;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -34,29 +36,34 @@ public class CommandReport implements CommandExecutor {
                                             .replaceAll("%reported%", target.getName()));
                                 }
                             }
+
+                            FileConfiguration configReports = FileReport.getInstance().getConfig();
+                            int idReport = Integer.parseInt(configReports.getString("MaxID")) + 1;
+                            configReports.set("Reports." + idReport + ".Reporter", commandSender.getName());
+                            configReports.set("Reports." + idReport + ".Reported", strings[0]);
+                            configReports.set("Reports." + idReport + ".Reason", message);
+                            configReports.set("MaxID", String.valueOf(idReport));
+                            FileReport.getInstance().saveConfig();
+
                             main.getServer().getScheduler().scheduleSyncDelayedTask(main, () -> cooldown.remove(commandSender.getName()), 20 * main.getConfig().getInt("Report.Cooldown"));
-                            return true;
                         } else {
                             commandSender.sendMessage(main.getConfig().getString("Report.Cooldown-Message").replaceAll
                                     ("%number%", String.valueOf(main.getConfig().getInt("Report.Cooldown"))).replaceAll("&", "§"));
-                            return true;
                         }
-                    } else {
+                    }
+                    else {
                         formatChatPrefix(commandSender, getConfigString("Report.Report-Usage"));
-                        return true;
                     }
                 } else {
                     formatChatPrefix(commandSender, getConfigString("Report.Report-Yourself"));
-                    return true;
                 }
             } else {
                 formatChatPrefix(commandSender, (getConfigString("Chat.Player-Not-Found")).replaceAll("%player%", strings[0]));
-                return true;
             }
         } else {
             formatChatPrefix(commandSender, getConfigString("Report.Report-Usage"));
-            return true;
         }
+        return true;
     }
 
     private void formatChatPrefix(CommandSender sender, String message) {

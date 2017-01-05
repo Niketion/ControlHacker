@@ -3,7 +3,7 @@
 # OpenSource: github.com/Niketion/ControlHacker
 #
 
-Version-Config: 4.0 # Don't touch
+Version-Config: 4.1 # Don't touch
 
 Chat:
   Prefix: '&9ControlHacker>'
@@ -46,6 +46,11 @@ Report:
   Report-Usage: '&7Usage: /report <player> <text>'
   Report-Yourself: '&7You can''t report yourself...'
   Thanks-For-Report: '&7Thanks for reporting &d%player%&7.'
+  Report-List-Format: '&9#%id% &c%reported% &7is reported by &b%reporter% &7for &6%reason%'
+  No-Reports: '&eThere isn''t reports.'
+  Reports-List: '&7List reports:'
+  Usage-Args-List: '&7Usage: /lr closeall'
+  All-Report-Closed: '&7All reports are closed.'
 
 #
 # Sound list:

@@ -1,5 +1,5 @@
 author: Niketion
-version: 4.0
+version: 4.1
 main: it.nik.controlhacker.Main
 name: ControlHacker
 softdepend: [TitleManager]
@@ -20,6 +20,10 @@ commands:
     description: A command of ControlHacker.
     usage: /<command> <arg> <arg>
     aliases: segnala
+  listreports:
+     description: A command of ControlHacker.
+     usage: /<command>
+     aliases: lr
 permissions:
   controlhacker.admin:
     children:
