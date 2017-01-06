@@ -25,9 +25,11 @@ public class ListenerControlHacker implements Listener {
         if (isOnControl(player)) {
             event.setCancelled(true);
             for (Player playerWorld : Bukkit.getOnlinePlayers()) {
-                if (playerWorld.getWorld().getName().equals(FileLocation.getInstance().getLocationConfig().getString("Hacker.World"))) {
-                    playerWorld.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
-                            .replaceAll("%message%", event.getMessage()));
+                if (playerWorld.hasPermission("controlhacker.mod")) {
+                    if (playerWorld.getWorld().getName().equals(FileLocation.getInstance().getLocationConfig().getString("Hacker.World"))) {
+                        playerWorld.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
+                                .replaceAll("%message%", event.getMessage()));
+                    }
                 }
             }
         }
