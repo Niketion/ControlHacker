@@ -29,6 +29,8 @@ public class ListenerControlHacker implements Listener {
                     if (playerWorld.getWorld().getName().equals(FileLocation.getInstance().getLocationConfig().getString("Hacker.World"))) {
                         playerWorld.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
                                 .replaceAll("%message%", event.getMessage()));
+                        event.getPlayer().sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
+                                .replaceAll("%message%", event.getMessage()));
                     }
                 }
             }

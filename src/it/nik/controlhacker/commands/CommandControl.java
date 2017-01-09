@@ -28,26 +28,29 @@ public class CommandControl implements CommandExecutor {
                         Player target = Bukkit.getPlayerExact(strings[0]);
                         if (!(commandSender.equals(target))) {
                             if (!(Fuctions.getInstance().isOnControl(target))) {
-                                Player playerCommand = (Player) commandSender;
+                                    Player playerCommand = (Player) commandSender;
 
-                                if (teleport("Staffer", playerCommand)) ;
-                                if (teleport("Hacker", target)) ;
+                                    if (teleport("Staffer", playerCommand)) ;
+                                    if (teleport("Hacker", target)) ;
 
-                                Fuctions.getInstance().addToControl(target);
+                                    Fuctions.getInstance().addToControl(target);
 
-                                playerCommand.sendMessage(main.formatChatPrefix(fileConfiguration.getString("Chat.Start-Control.Staffer")
-                                        .replaceAll("%player%", strings[0])));
-                                target.sendMessage(main.formatChat(fileConfiguration.getString("Chat.Start-Control.Hacker")
-                                        .replaceAll("%player%", playerCommand.getName())));
+                                    playerCommand.sendMessage(main.formatChatPrefix(fileConfiguration.getString("Chat.Start-Control.Staffer")
+                                            .replaceAll("%player%", strings[0])));
+                                    target.sendMessage(main.formatChat(fileConfiguration.getString("Chat.Start-Control.Hacker")
+                                            .replaceAll("%player%", playerCommand.getName())));
 
-                                if (main.depends()) {
-                                    new TitleObject(main.formatChat(fileConfiguration.getString("Title.Start-Control.Title")), TitleObject.TitleType.TITLE)
-                                            .setSubtitle(main.formatChat(fileConfiguration.getString("Title.Start-Control.SubTitle")
-                                                    .replaceAll("%player%", playerCommand.getName())))
-                                            .setFadeIn(0)
-                                            .setStay(Integer.MAX_VALUE)
-                                            .setFadeOut(0)
-                                            .send(target);
+                                try {
+                                    if (main.depends()) {
+                                        new TitleObject(main.formatChat(fileConfiguration.getString("Title.Start-Control.Title")), TitleObject.TitleType.TITLE)
+                                                .setSubtitle(main.formatChat(fileConfiguration.getString("Title.Start-Control.SubTitle")
+                                                        .replaceAll("%player%", playerCommand.getName())))
+                                                .setFadeIn(0)
+                                                .setStay(Integer.MAX_VALUE)
+                                                .setFadeOut(0)
+                                                .send(target);
+                                    }
+                                } catch (NoClassDefFoundError ignored) {
                                 }
                                 return true;
                             } else {

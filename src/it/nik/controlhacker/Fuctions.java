@@ -45,7 +45,9 @@ public class Fuctions {
         FileConfiguration fileConfiguration = FileLocation.getInstance().getLocationConfig();
         if (fileConfiguration.getString("EndControl.World") != null) {
             Fuctions.getInstance().removeToControl(player);
-            new TitleObject("", "").send(player);
+            try {
+                new TitleObject("", "").send(player);
+            } catch (NoClassDefFoundError ignored) {}
 
             player.teleport(new Location(Bukkit.getWorld(fileConfiguration.getString("EndControl.World")),
                     fileConfiguration.getInt("EndControl.X"),
