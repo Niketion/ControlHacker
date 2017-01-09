@@ -23,14 +23,12 @@ public class ListenerControlHacker implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (isOnControl(player)) {
-            event.setCancelled(true);
             for (Player playerWorld : Bukkit.getOnlinePlayers()) {
                 if (playerWorld.hasPermission("controlhacker.mod")) {
                     if (playerWorld.getWorld().getName().equals(FileLocation.getInstance().getLocationConfig().getString("Hacker.World"))) {
-                        playerWorld.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
-                                .replaceAll("%message%", event.getMessage()));
-                        event.getPlayer().sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName())
-                                .replaceAll("%message%", event.getMessage()));
+                        playerWorld.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName()).replaceAll("%message%", event.getMessage()));
+                        player.sendMessage(main.formatChat(getConfigString("Event.Format-Control")).replaceAll("%player%", player.getName()).replaceAll("%message%", event.getMessage()));
+                        return;
                     }
                 }
             }
@@ -104,17 +102,21 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (isOnControl((Player) event.getEntity())) {
-                event.setCancelled(getConfigBoolean("Event.God"));
+        if (isOnControl((Player) event.getEntity())) {
+            if (event.getEntity() instanceof Player) {
+                if (isOnControl((Player) event.getEntity())) {
+                    event.setCancelled(getConfigBoolean("Event.God"));
+                }
             }
         }
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            event.setCancelled(getConfigBoolean("Event.Block-Break"));
+        if (isOnControl(event.getPlayer())) {
+            if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                event.setCancelled(getConfigBoolean("Event.Block-Break"));
+            }
         }
     }
 
