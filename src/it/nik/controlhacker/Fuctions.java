@@ -28,6 +28,7 @@ public class Fuctions {
     }
 
     private ArrayList<String> controlled = new ArrayList<>();
+    private ArrayList<String> freezed = new ArrayList<>();
 
     public boolean addToControl(Player player) {
         return controlled.add(player.getName());
@@ -44,17 +45,22 @@ public class Fuctions {
     public void finishControl(Player player, CommandSender controller) {
         FileConfiguration fileConfiguration = FileLocation.getInstance().getLocationConfig();
         if (fileConfiguration.getString("EndControl.World") != null) {
-            Fuctions.getInstance().removeToControl(player);
+
+            if (!isFreezed(player)) {
+                player.teleport(new Location(Bukkit.getWorld(fileConfiguration.getString("EndControl.World")),
+                        fileConfiguration.getInt("EndControl.X"),
+                        fileConfiguration.getInt("EndControl.Y"),
+                        fileConfiguration.getInt("EndControl.Z"),
+                        fileConfiguration.getInt("EndControl.Yaw"),
+                        fileConfiguration.getInt("EndControl.Pitch")));
+            }
+
+            removeToControl(player);
+            if (isFreezed(player)) { removeToFreeze(player); }
+
             try {
                 new TitleObject("", "").send(player);
             } catch (NoClassDefFoundError ignored) {}
-
-            player.teleport(new Location(Bukkit.getWorld(fileConfiguration.getString("EndControl.World")),
-                    fileConfiguration.getInt("EndControl.X"),
-                    fileConfiguration.getInt("EndControl.Y"),
-                    fileConfiguration.getInt("EndControl.Z"),
-                    fileConfiguration.getInt("EndControl.Yaw"),
-                    fileConfiguration.getInt("EndControl.Pitch")));
 
             try {
                 player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("Sound.End-Control")
@@ -62,6 +68,7 @@ public class Fuctions {
             } catch (NullPointerException e) {
                 main.formatMessageError("Sound not found... Change it.");
             }
+
             player.sendMessage(main.formatChatPrefix(main.getConfig().getString("Chat.End-Control.Hacker")
                     .replaceAll("%player%", controller.getName())));
             controller.sendMessage(main.formatChatPrefix(main.getConfig().getString("Chat.End-Control.Staffer")
@@ -69,5 +76,17 @@ public class Fuctions {
         } else {
             Bukkit.broadcastMessage(main.formatChatPrefix("&7Location of &dEndControl &7not set."));
         }
+    }
+
+    public boolean setFreeze(Player player) {
+        return freezed.add(player.getName());
+    }
+
+    public boolean removeToFreeze(Player player) {
+        return freezed.remove(player.getName());
+    }
+
+    public boolean isFreezed(Player player) {
+        return freezed.contains(player.getName());
     }
 }

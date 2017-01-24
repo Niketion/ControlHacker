@@ -3,7 +3,24 @@
 # OpenSource: github.com/Niketion/ControlHacker
 #
 
-Version-Config: 4.1 # Don't touch
+Version-Config: 4.4 # Don't touch
+
+Freeze:
+  Active: false
+  Usage: '&7Usage: /freeze [player]'
+  Player-Not-Found: '&cPlayer not found...'
+  Freezed-Start: '&d%player% &7is freezed.'
+  Player-Is-Freezed: '&7Player is already freezed. Use /finish [name] for unfreezed!'
+  Message: |-
+   &f11111&c1&f11111
+   &f1111&c1&61&c1&f1111
+   &f111&c1&61&01&61&c1&f111 &7You're freezed!
+   &f111&c1&61&01&61&c1&f111 &7Please don't slog
+   &f11&c1&611&01&611&c1&f11 &7and open &cts.IP.com&7!
+   &f11&c1&611111&c1&f11 &4(Hack is illegal!)
+   &f1&c1&6111&01&6111&c1&f1
+   &c11111111111
+   &f11111111111
 
 Chat:
   Prefix: '&9ControlHacker>'
@@ -19,7 +36,7 @@ Chat:
       &7Give contact and don't quit the game!
   End-Control:
     Staffer: '&d%player%&7 is teleported to zone of endcontrol.'
-    Hacker: '&7Thanks for the patience, control completed. You''re teleported at the spawn by &b%player%&7.'
+    Hacker: '&7Thanks for the patience, control completed.'
   Quit: '&c%player%&7 is quit by a control.'
   Player-Not-Controlled: '&e%player%&7 isn''t in a control!'
 
@@ -28,7 +45,6 @@ Event:
   Command-Blocked: '&7All commands are disabled in the control.'
   Block-Break: false
   Block-Place: false
-  Teleport: false
   Drop-Item: false
   Bow: false
   God: true

@@ -3,7 +3,10 @@ package it.nik.controlhacker;
 import it.nik.controlhacker.commands.*;
 import it.nik.controlhacker.files.FileLocation;
 import it.nik.controlhacker.files.FileReport;
-import it.nik.controlhacker.listeners.ListenerControlHacker;
+import it.nik.controlhacker.listeners.ListenerBlock;
+import it.nik.controlhacker.listeners.ListenerChat;
+import it.nik.controlhacker.listeners.ListenerDamage;
+import it.nik.controlhacker.listeners.ListenerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -43,16 +46,12 @@ public class Main extends JavaPlugin {
     }
 
     public boolean depends() {
-        if (pluginManager.getPlugin("TitleManager") != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return pluginManager.getPlugin("TitleManager") != null;
     }
 
     private boolean getNoErrors() {
         if (String.valueOf(getDescription().getAuthors()).equals("[Niketion]")
-                || getDescription().getVersion().equalsIgnoreCase("4.1")
+                || getDescription().getVersion().equalsIgnoreCase("4.4")
                 || pluginManager.isPluginEnabled("ControlHacker")) {
             return true;
         } else {
@@ -69,8 +68,12 @@ public class Main extends JavaPlugin {
             getCommand("control").setExecutor(new CommandControl());
             getCommand("finish").setExecutor(new CommandFinish());
             getCommand("listreports").setExecutor(new CommandListReports());
+            getCommand("freeze").setExecutor(new CommandFreeze());
 
-            pluginManager.registerEvents(new ListenerControlHacker(), this);
+            pluginManager.registerEvents(new ListenerUtils(), this);
+            pluginManager.registerEvents(new ListenerChat(), this);
+            pluginManager.registerEvents(new ListenerBlock(), this);
+            pluginManager.registerEvents(new ListenerDamage(), this);
 
             return true;
         } catch (Exception e) {
@@ -82,7 +85,7 @@ public class Main extends JavaPlugin {
 
     private boolean loadConfig() {
         try {
-            if (getConfig().getString("Version-Config").equalsIgnoreCase("4.1")) {
+            if (getConfig().getString("Version-Config").equalsIgnoreCase(String.valueOf(getDescription().getVersion()))) {
                 getConfig().options().copyDefaults(true);
 
                 FileLocation fileLocation = FileLocation.getInstance();
@@ -135,6 +138,6 @@ public class Main extends JavaPlugin {
     }
 
     public void formatMessageError(String message, Exception exception) {
-        log(Level.WARNING, "Error: " + message + ". Exception: " + exception.getClass().getName());
+        log(Level.WARNING, "[ControlHacker] Error: " + message + ". Exception: " + exception.getClass().getName());
     }
 }
