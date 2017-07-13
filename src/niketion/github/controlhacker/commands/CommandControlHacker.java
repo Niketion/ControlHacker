@@ -51,24 +51,28 @@ public class CommandControlHacker implements CommandExecutor {
 
         switch(strings[0]) {
             case "top":
-                Map<String, Comparable> variableMap = new HashMap<>();
-                for (String map : new FileManager("top", "stats").getConfig().getConfigurationSection("top").getKeys(false)) {
-                    if (new File(main.getDataFolder()+"/stats/"+map+".yml").exists())
-                        variableMap.put(map, new FileManager("top", "stats").getConfig().getInt("top." + map));
-                }
-                final SortedMap<String, Comparable> sortedMap = ImmutableSortedMap
-                        .copyOf(variableMap, Ordering.natural().reverse().onResultOf(Functions.forMap(variableMap)).compound(Ordering.natural().reverse()));
-
-                Date now = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                commandSender.sendMessage(main.format(commandFuctions.getString("top-message.head").replaceAll("%date%", format.format(now))));
-                int number = 1;
-                for (String key : sortedMap.keySet()) {
-                    if (number <= main.getConfig().getInt("top-number")) {
-                        int value = (int) sortedMap.get(key);
-                        commandSender.sendMessage(main.format(commandFuctions.getString("top-message.default").replaceAll("%number%", String.valueOf(number)).replaceAll("%player%", key).replaceAll("%value%", String.valueOf(value))));
+                try {
+                    Map<String, Comparable> variableMap = new HashMap<>();
+                    for (String map : new FileManager("top", "stats").getConfig().getConfigurationSection("top").getKeys(false)) {
+                        if (new File(main.getDataFolder() + "/stats/" + map + ".yml").exists())
+                            variableMap.put(map, new FileManager("top", "stats").getConfig().getInt("top." + map));
                     }
-                    number++;
+                    final SortedMap<String, Comparable> sortedMap = ImmutableSortedMap
+                            .copyOf(variableMap, Ordering.natural().reverse().onResultOf(Functions.forMap(variableMap)).compound(Ordering.natural().reverse()));
+
+                    Date now = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    commandSender.sendMessage(main.format(commandFuctions.getString("top-message.head").replaceAll("%date%", format.format(now))));
+                    int number = 1;
+                    for (String key : sortedMap.keySet()) {
+                        if (number <= main.getConfig().getInt("top-number")) {
+                            int value = (int) sortedMap.get(key);
+                            commandSender.sendMessage(main.format(commandFuctions.getString("top-message.default").replaceAll("%number%", String.valueOf(number)).replaceAll("%player%", key).replaceAll("%value%", String.valueOf(value))));
+                        }
+                        number++;
+                    }
+                } catch (NullPointerException excpetion) {
+                    commandSender.sendMessage(main.format(commandFuctions.getString("top-null")));
                 }
                 return true;
             case "setzone":

@@ -53,6 +53,7 @@ stats-message:
   - "&aAdmission/Refusal:&7 %value-4%"
 
 top-number: 10
+top-null: "&cHistory not found..."
 top-message:
   head: "&aTop checker &7(%date%)&a:"
   default: "#%number% &7%player% - %value%"

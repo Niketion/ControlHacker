@@ -57,7 +57,7 @@ public class ListenerControlHacker implements Listener {
 
             if (main.getConfig().getBoolean("command-quit-from-control.enabled")) {
                 for (String command : main.getConfig().getStringList("command-quit-from-control.commands")) {
-                    main.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                    main.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", event.getPlayer().getName()));
                 }
             }
 
@@ -75,39 +75,17 @@ public class ListenerControlHacker implements Listener {
             event.setResult(Event.Result.DENY);
 
             String data = event.getCurrentItem().getData().toString();
+            Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
 
             if (data.contains("14")) {
-                refreshStats(event.getWhoClicked().getName(),"hack");
-                for (String command : main.getConfig().getStringList("finish-second-option.commands")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
+                executeClick(event.getWhoClicked().getName(), target, "hack", "second");
             } else if (data.contains("4")) {
-                refreshStats(event.getWhoClicked().getName(),"admission-refusal");
-                for (String command : main.getConfig().getStringList("finish-first-option.commands")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
+                executeClick(event.getWhoClicked().getName(), target, "admission-refusal", "first");
             } else if (data.contains("5")) {
-                refreshStats(event.getWhoClicked().getName(),"clean");
-                for (String command : main.getConfig().getStringList("finish-third-option.commands")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
-
-                Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
-
-                // Teleport cheater to spawn
-                target.teleport(new CommandFuctions().getZone("end"));
-
-                // Disable fly
-                target.setAllowFlight(false);
+                executeClick(event.getWhoClicked().getName(), target, "clean", "third");
 
                 target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
                 event.getWhoClicked().sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
-
-                // Reset title
-                if (!main.getServer().getBukkitVersion().contains("1.7"))
-                    main.getTitle().sendTitle(target, "a", 1, 1, 1);
-
-                new FileManager("top", "stats").set("top."+event.getWhoClicked().getName(), new FileManager(event.getWhoClicked().getName(), "stats").getConfig().getInt("all-controls")+1);
             } else {
                 return;
             }
@@ -115,17 +93,32 @@ public class ListenerControlHacker implements Listener {
 
             // Remove from HashMap
             main.getInCheck().remove(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
+            new FileManager("top", "stats").set("top."+event.getWhoClicked().getName(), new FileManager(event.getWhoClicked().getName(), "stats").getConfig().getInt("all-controls")+1);
         }
     }
 
     /**
-     * Refresh stats in their config
-     * @param name - Name of checker
-     * @param option - Option control
+     * Compact for click event
+     * @param nameChecker - Name of checker
+     * @param target - Cheater
+     * @param option - "clean/admission-refusal/hack"
+     * @param numberConfig - "third/first/second"
      */
-    private void refreshStats(String name, String option) {
-        new FileManager(name, "stats").set("all-controls", new FileManager(name, "stats").getConfig().getInt("all-controls")+1);
-        new FileManager(name, "stats").set(option, new FileManager(name, "stats").getConfig().getInt(option)+1);
+    private void executeClick(String nameChecker, Player target, String option, String numberConfig) {
+        new FileManager(nameChecker, "stats").set("all-controls", new FileManager(nameChecker, "stats").getConfig().getInt("all-controls")+1);
+        new FileManager(nameChecker, "stats").set(option, new FileManager(nameChecker, "stats").getConfig().getInt(option)+1);
+        // Teleport cheater to spawn
+        target.teleport(new CommandFuctions().getZone("end"));
+
+        // Disable fly
+        target.setAllowFlight(false);
+
+        // Reset title
+        if (!main.getServer().getBukkitVersion().contains("1.7"))
+            main.getTitle().sendTitle(target, "a", 1, 1, 1);
+        for (String command : main.getConfig().getStringList("finish-"+numberConfig+"-option.commands")) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%cheater%", target.getName()).replaceAll("%checker%", nameChecker));
+        }
     }
 
     @EventHandler
