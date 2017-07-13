@@ -1,86 +1,74 @@
-#
-# Niketion - ControlHacker
-# OpenSource: github.com/Niketion/ControlHacker
-#
+# Plugin developed by Niketion, License: MIT
+# Github: github.com/Niketion/ControlHacker
+permission-denied: "&cYou don't have permission."
+usage-controlhacker:
+ - '&5/ch reload &7- Reload config'
+ - '&5/ch setzone (cheater/checker/end) &7- Set various location'
+ - '&5/ch stats <checker> &7- Check stats of a checker'
+ - '&5/ch reset <checker> &7- Reset stats'
+ - '&5/ch top &7- See top of checker'
+zone-set: "&aZone %value% successfully set."
+usage-control: "&aUsage: /control <player>"
+usage-finish: "&aUsage: /finish <player>"
+player-not-found: "&c%player% not found..."
+stats-not-found: "&cStats of %player% not found..."
+is-not-in-check: "&c%player% isn't in a check"
+cheater-is-quit: "&4&l[!!!] &c%player% is quit from a control."
+check-yourself:
+ enabled: false
+ message: "&cYou can't check yourself."
+title:
+  title-message: "&cCONTROL"
+  subtitle-message: "&7by %player%"
+cheater-message:
+ - "&4&lWARNING!"
+ - ""
+ - "&7Give id skype/teamviewer/anydesk"
+ - "&7to checker (%player%)"
+ - "&cDON'T SLOG."
 
-Version-Config: 4.4 # Don't touch
+old-finish: false # I would recommend using the new version
+checker-message: "&a%player% was teleported to zone of control, START CHECK."
+finish-cheater-message: "&aThanks for the pacience, control finished."
+finish-checker-message: "&a%player% was teleport to end control."
 
-Freeze:
-  Active: false
-  Usage: '&7Usage: /freeze [player]'
-  Player-Not-Found: '&cPlayer not found...'
-  Freezed-Start: '&d%player% &7is freezed.'
-  Player-Is-Freezed: '&7Player is already freezed. Use /finish [name] for unfreezed!'
-  Message: |-
-   &f11111&c1&f11111
-   &f1111&c1&61&c1&f1111
-   &f111&c1&61&01&61&c1&f111 &7You're freezed!
-   &f111&c1&61&01&61&c1&f111 &7Please don't slog
-   &f11&c1&611&01&611&c1&f11 &7and open &cts.IP.com&7!
-   &f11&c1&611111&c1&f11 &4(Hack is illegal!)
-   &f1&c1&6111&01&6111&c1&f1
-   &c11111111111
-   &f11111111111
+finish-first-option:
+ display-name: "&e&lREFUSAL CONTROL/ADMISSION"
+ commands: # (Command by Console)
+  - "tempban 5day %cheater% Refusal/admission control (Controlled by %checker%)"
+finish-second-option:
+ display-name: "&c&lHACK"
+ commands: # (Command by Console)
+  - "tempban 10day %cheater% Hack (Controlled by %checker%)"
+finish-third-option:
+ display-name: "&a&lCLEAN"
+ commands: []
 
-Chat:
-  Prefix: '&9ControlHacker>'
-  Permission-Denied: '&7You don''t have permission.'
-  Player-Not-Found: '&6%player%&7 not found...'
-  Usage-Control: '&7Usage: /<command> <player>'
-  Control-Yourself: '&7You can''t control yourself...'
-  Already-Control: '&7Player is already in a control.'
-  Start-Control:
-    Staffer: '&7Ok, start the control to %player%'
-    Hacker: |-
-      &4&lALERT! &7The control is started by &d%player%!
-      &7Give contact and don't quit the game!
-  End-Control:
-    Staffer: '&d%player%&7 is teleported to zone of endcontrol.'
-    Hacker: '&7Thanks for the patience, control completed.'
-  Quit: '&c%player%&7 is quit by a control.'
-  Player-Not-Controlled: '&e%player%&7 isn''t in a control!'
+stats-deleted: "&aStats of %player% deleted."
+stats-message:
+  - "&aStats of %player%:"
+  - "&aAll controls:&7 %value-1%"
+  - "&aClean:&7 %value-2%"
+  - "&aHack:&7 %value-3%"
+  - "&aAdmission/Refusal:&7 %value-4%"
 
-Event:
-  Format-Control: '&4&lCONTROL &7%player%: %message%'
-  Command-Blocked: '&7All commands are disabled in the control.'
-  Block-Break: false
-  Block-Place: false
-  Drop-Item: false
-  Bow: false
-  God: true
+top-number: 10
+top-message:
+  head: "&aTop checker &7(%date%)&a:"
+  default: "#%number% &7%player% - %value%"
 
-Report:
-  Cooldown: 30 # seconds
-  Cooldown-Message: '&7Wait &d%number% &7seconds...'
-  Prefix: '&9Report>'
-  Report-Message: |-
-    &2&l&m=============================================
-    &9Report> &7New report:
-     &d%reported% &7is reported by &b%player%&7.
-     &7Reason: &c%reason%
-    &2&l&m=============================================
-  Report-Usage: '&7Usage: /report <player> <text>'
-  Report-Yourself: '&7You can''t report yourself...'
-  Thanks-For-Report: '&7Thanks for reporting &d%player%&7.'
-  Report-List-Format: '&9#%id% &c%reported% &7is reported by &b%reporter% &7for &6%reason%'
-  No-Reports: '&eThere isn''t reports.'
-  Reports-List: '&7List reports:'
-  Usage-Args-List: '&7Usage: /lr closeall'
-  All-Report-Closed: '&7All reports are closed.'
-
-#
-# Sound list:
-#   1.8: http://docs.codelanx.com/Bukkit/1.8/org/bukkit/Sound.html
-#   1.9+: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
-#
-
-Sound:
-  Start-Control: note-pling
-  End-Control: note-bass
-
-Title:
-  Start-Control:
-    Title: '&4&lCONTROL!'
-    SubTitle: '&7by &c%player%'
-
-
+command-quit-from-control:
+  enabled: true
+  commands:
+   - "tempban 5d %player% Quit from a control"
+format-chat:
+ format: "&c[%time%]&f %player%: %message%"
+event:
+  stop-command: true
+  command-whitelisted:
+   - "/f"
+  stop-move: false
+  stop-drop: true
+  stop-break: true
+  stop-place: true
+  stop-damage: true

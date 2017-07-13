@@ -1,36 +1,12 @@
-author: Niketion
-version: 4.4
-main: it.nik.controlhacker.Main
 name: ControlHacker
-softdepend: [TitleManager]
+version: 5.0.0
+author: Niketion
+main: niketion.github.controlhacker.Main
 commands:
   controlhacker:
-    description: A command of ControlHacker.
-    usage: /<command> <arg> <arg>
+    description: ControlHacker main command
     aliases: ch
   control:
-    description: A command of ControlHacker.
-    usage: /<command> <arg>
-    aliases: controllo
+    description: Control a cheater
   finish:
-    description: A command of ControlHacker.
-    usage: /<command> <arg>
-    aliases: termina
-  report:
-    description: A command of ControlHacker.
-    usage: /<command> <arg> <arg>
-    aliases: segnala
-  listreports:
-     description: A command of ControlHacker.
-     usage: /<command>
-     aliases: lr
-  freeze:
-     description: A command of ControlHacker.
-     usage: /<command> <arg>
-permissions:
-  controlhacker.admin:
-    children:
-      controlhacker.mod: true
-    default: op
-  controlhacker.mod:
-    default: op
+    description: Finish a control
