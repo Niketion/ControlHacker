@@ -70,31 +70,33 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory().getTitle().contains("Finish")) {
-            event.setCancelled(true);
-            event.setResult(Event.Result.DENY);
+        try {
+            if (event.getClickedInventory().getTitle().contains("Finish")) {
+                event.setCancelled(true);
+                event.setResult(Event.Result.DENY);
 
-            String data = event.getCurrentItem().getData().toString();
-            Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
+                String data = event.getCurrentItem().getData().toString();
+                Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
 
-            if (data.contains("14")) {
-                executeClick(event.getWhoClicked().getName(), target, "hack", "second");
-            } else if (data.contains("4")) {
-                executeClick(event.getWhoClicked().getName(), target, "admission-refusal", "first");
-            } else if (data.contains("5")) {
-                executeClick(event.getWhoClicked().getName(), target, "clean", "third");
+                if (data.contains("14")) {
+                    executeClick(event.getWhoClicked().getName(), target, "hack", "second");
+                } else if (data.contains("4")) {
+                    executeClick(event.getWhoClicked().getName(), target, "admission-refusal", "first");
+                } else if (data.contains("5")) {
+                    executeClick(event.getWhoClicked().getName(), target, "clean", "third");
 
-                target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
-                event.getWhoClicked().sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
-            } else {
-                return;
+                    target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
+                    event.getWhoClicked().sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
+                } else {
+                    return;
+                }
+                event.getWhoClicked().closeInventory();
+
+                // Remove from HashMap
+                main.getInCheck().remove(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
+                new FileManager("top", "stats").set("top." + event.getWhoClicked().getName(), new FileManager(event.getWhoClicked().getName(), "stats").getConfig().getInt("all-controls") + 1);
             }
-            event.getWhoClicked().closeInventory();
-
-            // Remove from HashMap
-            main.getInCheck().remove(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
-            new FileManager("top", "stats").set("top."+event.getWhoClicked().getName(), new FileManager(event.getWhoClicked().getName(), "stats").getConfig().getInt("all-controls")+1);
-        }
+        } catch (NullPointerException ignored) {}
     }
 
     /**
