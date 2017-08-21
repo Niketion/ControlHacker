@@ -1,0 +1,75 @@
+# Plugin developed by Niketion, License: MIT
+# Github: github.com/Niketion/ControlHacker
+permission-denied: "&cYou don't have permission."
+usage-controlhacker:
+ - '&5/ch reload &7- Reload config'
+ - '&5/ch setzone (cheater/checker/end) &7- Set various location'
+ - '&5/ch stats <checker> &7- Check stats of a checker'
+ - '&5/ch reset <checker> &7- Reset stats'
+ - '&5/ch top &7- See top of checker'
+zone-set: "&aZone %value% successfully set."
+usage-control: "&aUsage: /control <player>"
+usage-finish: "&aUsage: /finish <player>"
+player-not-found: "&c%player% not found..."
+stats-not-found: "&cStats of %player% not found..."
+is-not-in-check: "&c%player% isn't in a check"
+cheater-is-quit: "&4&l[!!!] &c%player% is quit from a control."
+check-yourself:
+ enabled: false
+ message: "&cYou can't check yourself."
+title:
+  title-message: "&cCONTROL"
+  subtitle-message: "&7by %player%"
+cheater-message:
+ - "&4&lWARNING!"
+ - ""
+ - "&7Give id skype/teamviewer/anydesk"
+ - "&7to checker (%player%)"
+ - "&cDON'T SLOG."
+
+old-finish: false # I would recommend using the new version
+checker-message: "&a%player% was teleported to zone of control, START CHECK."
+finish-cheater-message: "&aThanks for the pacience, control finished."
+finish-checker-message: "&a%player% was teleport to end control."
+
+finish-first-option:
+ display-name: "&e&lREFUSAL CONTROL/ADMISSION"
+ commands: # (Command by Console)
+  - "tempban 5day %cheater% Refusal/admission control (Controlled by %checker%)"
+finish-second-option:
+ display-name: "&c&lHACK"
+ commands: # (Command by Console)
+  - "tempban 10day %cheater% Hack (Controlled by %checker%)"
+finish-third-option:
+ display-name: "&a&lCLEAN"
+ commands: []
+
+stats-deleted: "&aStats of %player% deleted."
+stats-message:
+  - "&aStats of %player%:"
+  - "&aAll controls:&7 %value-1%"
+  - "&aClean:&7 %value-2%"
+  - "&aHack:&7 %value-3%"
+  - "&aAdmission/Refusal:&7 %value-4%"
+
+top-number: 10
+top-null: "&cHistory not found..."
+top-message:
+  head: "&aTop checker &7(%date%)&a:"
+  default: "#%number% &7%player% - %value%"
+
+command-quit-from-control:
+  enabled: true
+  commands:
+   - "tempban 5d %player% Quit from a control"
+format-chat:
+ format: "&c[%time%]&f %player%: %message%"
+event:
+  stop-command: true
+  command-whitelisted:
+   - "/f"
+  stop-move: false
+  stop-drop: true
+  stop-break: true
+  stop-place: true
+  stop-damage: true
