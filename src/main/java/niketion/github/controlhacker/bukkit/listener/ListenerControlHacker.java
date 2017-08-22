@@ -86,7 +86,9 @@ public class ListenerControlHacker implements Listener {
                     executeClick(event.getWhoClicked().getName(), target, "clean", "third");
 
                     target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
-                    event.getWhoClicked().sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
+                    if (event.getWhoClicked() instanceof Player) {
+                        Bukkit.getPlayerExact(event.getWhoClicked().getName()).sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
+                    }
                 } else {
                     return;
                 }
