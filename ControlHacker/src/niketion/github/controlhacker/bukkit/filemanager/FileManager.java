@@ -12,7 +12,7 @@ public class FileManager {
     private FileConfiguration config;
 
     public FileManager(String nameConfig, String directoryName) {
-        configFile = new File(Main.getInstance().getDataFolder()+"/"+directoryName+"/"+nameConfig+".yml");
+        configFile = new File(Main.getInstance().getDataFolder() + "/" + directoryName + "/" + nameConfig + ".yml");
         config = YamlConfiguration.loadConfiguration(configFile);
     }
 

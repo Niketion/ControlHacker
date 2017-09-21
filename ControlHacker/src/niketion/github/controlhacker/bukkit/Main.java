@@ -56,8 +56,7 @@ public class Main extends JavaPlugin {
 
         // Information to console
         consoleCommandSender.sendMessage(ChatColor.GREEN+"ControlHacker loading...");
-
-        System.out.println(Bukkit.getBukkitVersion());
+        consoleCommandSender.sendMessage(ChatColor.GREEN+"Server version detected: " + Bukkit.getBukkitVersion());
         
         // Setup version of title
         setupTitle();
@@ -79,6 +78,14 @@ public class Main extends JavaPlugin {
             consoleCommandSender.sendMessage(ChatColor.RED+"Title disabled, version server 1.7");
         } else {
             consoleCommandSender.sendMessage(ChatColor.GREEN+"Title enabled.");
+        }
+        
+        // Checks if the commands senders in the config are allowed
+        if (!validExecutor("first") || !validExecutor("second") || !validExecutor("third")){
+        	consoleCommandSender.sendMessage(ChatColor.RED + "=================================================");
+        	consoleCommandSender.sendMessage(ChatColor.RED + "ControlHacker ERROR! Invalid command executor(s) in the config.yml.");
+        	consoleCommandSender.sendMessage(ChatColor.RED + "Allowed values: config   console");
+        	consoleCommandSender.sendMessage(ChatColor.RED + "=================================================");
         }
     }
 
@@ -171,6 +178,14 @@ public class Main extends JavaPlugin {
         return false;
     }
 
+    private boolean validExecutor(String optionNumber){
+    	String configExec = getConfig().getString("finish-" + optionNumber + "-option.cmdsExecutor");
+    	if (!configExec.equalsIgnoreCase("player") || !configExec.equalsIgnoreCase("console")){
+    		return false;
+    	}
+    	return true;
+    }
+    
     /**
      * Where it is saved the checker and the cheater (getter)
      * @key cheater

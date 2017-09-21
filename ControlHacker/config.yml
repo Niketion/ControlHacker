@@ -34,15 +34,21 @@ finish-checker-message: "&a%player% was teleport to end control."
 
 finish-first-option:
  display-name: "&e&lREFUSAL CONTROL/ADMISSION"
- commands: # (Command by Console)
+ # CONSOLE -> The commands will be executed by the console
+ # PLAYER -> The commands will be executed by the "checker"
+ cmdsExecutor: PLAYER
+ commands:
   - "tempban 5day %cheater% Refusal/admission control (Controlled by %checker%)"
 finish-second-option:
  display-name: "&c&lHACK"
- commands: # (Command by Console)
+ cmdsExecutor: PLAYER
+ commands:
   - "tempban 10day %cheater% Hack (Controlled by %checker%)"
 finish-third-option:
  display-name: "&a&lCLEAN"
- commands: []
+ cmdsExecutor: CONSOLE
+ commands:
+ - "broadcast %% doesn't have any hacks"
 
 stats-deleted: "&aStats of %player% deleted."
 stats-message:

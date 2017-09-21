@@ -5,7 +5,9 @@ import niketion.github.controlhacker.bukkit.Permissions;
 import niketion.github.controlhacker.bukkit.commands.CommandFuctions;
 import niketion.github.controlhacker.bukkit.filemanager.FileManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -78,12 +80,16 @@ public class ListenerControlHacker implements Listener {
                 String data = event.getCurrentItem().getData().toString();
                 Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
 
+                if (event.getWhoClicked() instanceof Player)
+                	return;
+                Player inventoryClicker = (Player)event.getWhoClicked();
+                
                 if (data.contains("14")) {
-                    executeClick(event.getWhoClicked().getName(), target, "hack", "second");
+                    executeClick(inventoryClicker, target, "hack", "second");
                 } else if (data.contains("4")) {
-                    executeClick(event.getWhoClicked().getName(), target, "admission-refusal", "first");
+                    executeClick(inventoryClicker, target, "admission-refusal", "first");
                 } else if (data.contains("5")) {
-                    executeClick(event.getWhoClicked().getName(), target, "clean", "third");
+                    executeClick(inventoryClicker, target, "clean", "third");
 
                     target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
                     if (event.getWhoClicked() instanceof Player) {
@@ -108,9 +114,10 @@ public class ListenerControlHacker implements Listener {
      * @param option - "clean/admission-refusal/hack"
      * @param numberConfig - "third/first/second"
      */
-    private void executeClick(String nameChecker, Player target, String option, String numberConfig) {
-        new FileManager(nameChecker, "stats").set("all-controls", new FileManager(nameChecker, "stats").getConfig().getInt("all-controls")+1);
-        new FileManager(nameChecker, "stats").set(option, new FileManager(nameChecker, "stats").getConfig().getInt(option)+1);
+    private void executeClick(Player checker, Player target, String option, String numberConfig) {
+    	String checkerName = checker.getName();
+        new FileManager(checkerName, "stats").set("all-controls", new FileManager(checkerName, "stats").getConfig().getInt("all-controls")+1);
+        new FileManager(checkerName, "stats").set(option, new FileManager(checkerName, "stats").getConfig().getInt(option)+1);
         // Teleport cheater to spawn
         target.teleport(new CommandFuctions().getZone("end"));
 
@@ -119,12 +126,26 @@ public class ListenerControlHacker implements Listener {
 
         // Reset title
         if (!main.getServer().getBukkitVersion().contains("1.7"))
-            main.getTitle().sendTitle(target, "a", 1, 1, 1);
-        for (String command : main.getConfig().getStringList("finish-"+numberConfig+"-option.commands")) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%cheater%", target.getName()).replaceAll("%checker%", nameChecker));
+        	main.getTitle().sendTitle(target, "a", 1, 1, 1);
+        
+        String configPath = "finish-" + numberConfig + "option";
+        // Dispatch commands
+        for (String command : main.getConfig().getStringList(configPath + ".commands")){
+        	main.getServer().dispatchCommand(getCmdsExecutor(configPath, checker), command
+        			.replace("%cheater%", target.getName()) // non c'è bisogno di usare le regex
+        			.replace("%checker%", checkerName));
         }
     }
-
+    
+    private CommandSender getCmdsExecutor(String configPath, Player checker){
+    	String configExecutor = main.getConfig().getString(configPath + ".cmdsExecutor");
+    	// the onEnable already checks is the executor is different from "player" or "console" (non case-sentitive)
+    	if (configExecutor.equalsIgnoreCase("player")){
+        	return checker;
+    	}
+       	return Bukkit.getConsoleSender();
+    }
+    
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         try {

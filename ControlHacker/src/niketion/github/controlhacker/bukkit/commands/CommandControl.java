@@ -79,14 +79,16 @@ public class CommandControl implements CommandExecutor {
         }
 
         // Particles
+        String effectName; // to bypass an annoying IDE error
+        if (Bukkit.getBukkitVersion().contains("1.7")){
+        	effectName = "MOBSPAWNER_FLAMES";
+        } else {
+        	effectName = "FLAME";
+        }
+        
         for(int i = 0; i <360; i+=5){
             target.getLocation().setY(target.getLocation().getY() + Math.cos(i)*5);
-            if (Bukkit.getBukkitVersion().contains("1.7")){
-            	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.MOBSPAWNER_FLAMES, 51);
-            }else{
-            	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.FLAME, 51);
-            }
-            
+           	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.valueOf(effectName), 51);
         }
 
         // Put checker and cheater to "inCheck" hashMap
