@@ -71,7 +71,7 @@ public class ListenerControlHacker implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         try {
-            if (event.getClickedInventory().getTitle().contains("Finish")) {
+            if (event.getInventory().getTitle().contains("Finish")) {
                 event.setCancelled(true);
                 event.setResult(Event.Result.DENY);
 

@@ -78,10 +78,15 @@ public class CommandControl implements CommandExecutor {
             target.getWorld().playSound(target.getLocation(), Sound.valueOf("ENTITY_IRONGOLEM_HURT"), 10, 2);
         }
 
-        // Particle
+        // Particles
         for(int i = 0; i <360; i+=5){
             target.getLocation().setY(target.getLocation().getY() + Math.cos(i)*5);
-            target.getLocation().getWorld().playEffect(target.getLocation(), Effect.FLAME, 51);
+            if (Bukkit.getBukkitVersion().contains("1.7")){
+            	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.MOBSPAWNER_FLAMES, 51);
+            }else{
+            	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.FLAME, 51);
+            }
+            
         }
 
         // Put checker and cheater to "inCheck" hashMap

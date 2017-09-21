@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 
+// 1.7.10 Spigot Javadocs: https://jd.bukkit.org/
 
 public class Main extends JavaPlugin {
 
@@ -56,6 +57,8 @@ public class Main extends JavaPlugin {
         // Information to console
         consoleCommandSender.sendMessage(ChatColor.GREEN+"ControlHacker loading...");
 
+        System.out.println(Bukkit.getBukkitVersion());
+        
         // Setup version of title
         setupTitle();
 
