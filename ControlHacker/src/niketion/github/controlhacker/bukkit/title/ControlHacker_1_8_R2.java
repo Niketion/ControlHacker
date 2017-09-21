@@ -2,7 +2,8 @@ package niketion.github.controlhacker.bukkit.title;
 
 import net.minecraft.server.v1_8_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R2.PacketPlayOutTitle;
-import net.md_5.bungee.api.ChatColor;
+
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
