@@ -6,6 +6,9 @@ import niketion.github.controlhacker.bukkit.commands.CommandFinish;
 import niketion.github.controlhacker.bukkit.commands.CommandFuctions;
 import niketion.github.controlhacker.bukkit.listener.ListenerControlHacker;
 import niketion.github.controlhacker.bukkit.title.*;
+import niketion.github.controlhacker.bukkit.util.ControlGUI;
+import niketion.github.controlhacker.bukkit.util.FinishGUI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -13,7 +16,9 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 // 1.7.10 Spigot Javadocs: https://jd.bukkit.org/
 
@@ -35,7 +40,23 @@ public class Main extends JavaPlugin {
      * The various command functions
      */
     private CommandFuctions commandFuctions = new CommandFuctions();
-
+    
+    /**
+     * Get /control gui
+     */
+    private ControlGUI controlGui;
+    public ControlGUI getControlGUI() {
+    	return controlGui;
+    }
+    
+    /**
+     * Get /finish gui
+     */
+    private FinishGUI finishGui;
+    public FinishGUI getFinishGUI() {
+    	return finishGui;
+    }
+    
     /**
      * The instance of main
      */
@@ -64,6 +85,10 @@ public class Main extends JavaPlugin {
         // Setup default config.yml
         saveDefaultConfig();
 
+        // Create GUIs
+        controlGui = new ControlGUI();
+        finishGui = new FinishGUI();
+        
         // Registration of the events
         getServer().getPluginManager().registerEvents(new ListenerControlHacker(), this);
 
@@ -80,13 +105,6 @@ public class Main extends JavaPlugin {
             consoleCommandSender.sendMessage(ChatColor.GREEN+"Title enabled.");
         }
         
-        // Checks if the commands senders in the config are allowed
-        if (!validExecutor("first") || !validExecutor("second") || !validExecutor("third")){
-        	consoleCommandSender.sendMessage(ChatColor.RED + "=================================================");
-        	consoleCommandSender.sendMessage(ChatColor.RED + "ControlHacker ERROR! Invalid command executor(s) in the config.yml.");
-        	consoleCommandSender.sendMessage(ChatColor.RED + "Allowed values: config   console");
-        	consoleCommandSender.sendMessage(ChatColor.RED + "=================================================");
-        }
     }
 
     /**
@@ -112,6 +130,9 @@ public class Main extends JavaPlugin {
                     players.sendMessage(format(getConfig().getString("finish-cheater-message")));
                     Bukkit.getConsoleSender().sendMessage(format(getConfig().getString("finish-checker-message").replaceAll("%player%", players.getName())));
                 }
+        
+        // Clear the list of players who can close the "control gui"
+        getControlGUI().getCanCloseGui().clear();
     }
 
     /**
@@ -122,7 +143,20 @@ public class Main extends JavaPlugin {
     public String format(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
-
+    
+    /**
+     * Colors the lore
+     * @param lore - list of lore
+     * @return
+     */
+    public List<String> colorLore(List<String> lore) {
+		List<String> coloredLore = new ArrayList<>();
+		for (String line : lore) {
+			coloredLore.add(format(line));
+		}
+		return coloredLore;
+	}
+    
     /**
      * Check if version of server is 1.8+
      * @return boolean
@@ -178,14 +212,6 @@ public class Main extends JavaPlugin {
         return false;
     }
 
-    private boolean validExecutor(String optionNumber){
-    	String configExec = getConfig().getString("finish-" + optionNumber + "-option.cmdsExecutor");
-    	if (!configExec.equalsIgnoreCase("player") || !configExec.equalsIgnoreCase("console")){
-    		return false;
-    	}
-    	return true;
-    }
-    
     /**
      * Where it is saved the checker and the cheater (getter)
      * @key cheater

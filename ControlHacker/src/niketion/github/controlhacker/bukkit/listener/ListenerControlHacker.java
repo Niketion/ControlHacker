@@ -4,6 +4,8 @@ import niketion.github.controlhacker.bukkit.Main;
 import niketion.github.controlhacker.bukkit.Permissions;
 import niketion.github.controlhacker.bukkit.commands.CommandFuctions;
 import niketion.github.controlhacker.bukkit.filemanager.FileManager;
+import niketion.github.controlhacker.bukkit.util.ControlGUI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -17,7 +19,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +30,8 @@ import java.util.Map;
 public class ListenerControlHacker implements Listener {
 
     private Main main = Main.getInstance();
-
+    private ControlGUI controlGui = main.getControlGUI();
+    
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         for (String command : main.getConfig().getStringList("event.command-whitelisted")) {
@@ -56,7 +61,11 @@ public class ListenerControlHacker implements Listener {
             new FileManager("playerquit", "playerquit").add("list", event.getPlayer().getName());
             // Notify the entire staff that a player under control has come out
             new CommandFuctions().finishControl(event.getPlayer(), Bukkit.getConsoleSender());
-
+            
+            // Remove the player from the list of players who can close the "control gui"
+            if (main.getControlGUI().getCanCloseGui().contains(event.getPlayer()))
+            	main.getControlGUI().getCanCloseGui().remove(event.getPlayer());
+            
             if (main.getConfig().getBoolean("command-quit-from-control.enabled")) {
                 for (String command : main.getConfig().getStringList("command-quit-from-control.commands")) {
                     main.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", event.getPlayer().getName()));
@@ -72,39 +81,55 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        try {
-            if (event.getInventory().getTitle().contains("Finish")) {
+    	try {
+            // Finish Gui
+        	if (event.getInventory().getTitle().equals(main.getFinishGUI().getTitle())) {
                 event.setCancelled(true);
                 event.setResult(Event.Result.DENY);
 
                 String data = event.getCurrentItem().getData().toString();
                 Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
 
-                if (event.getWhoClicked() instanceof Player)
+                if (!(event.getWhoClicked() instanceof Player))
                 	return;
-                Player inventoryClicker = (Player)event.getWhoClicked();
+                Player checker = (Player)event.getWhoClicked();
                 
                 if (data.contains("14")) {
-                    executeClick(inventoryClicker, target, "hack", "second");
+                    executeFinishGuiClick(checker, target, "hack", "second");
                 } else if (data.contains("4")) {
-                    executeClick(inventoryClicker, target, "admission-refusal", "first");
+                    executeFinishGuiClick(checker, target, "admission-refusal", "first");
                 } else if (data.contains("5")) {
-                    executeClick(inventoryClicker, target, "clean", "third");
-
+                    executeFinishGuiClick(checker, target, "clean", "third");
+                    
+                    // Send Messages
                     target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
-                    if (event.getWhoClicked() instanceof Player) {
-                        Bukkit.getPlayerExact(event.getWhoClicked().getName()).sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
-                    }
+                    checker.sendMessage(main.format(main.getConfig().getString("finish-checker-message").replace("%player%", target.getName())));
                 } else {
-                    return;
+                	return;
                 }
-                event.getWhoClicked().closeInventory();
-
+                checker.closeInventory();
+                
                 // Remove from HashMap
                 main.getInCheck().remove(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
                 new FileManager("top", "stats").set("top." + event.getWhoClicked().getName(), new FileManager(event.getWhoClicked().getName(), "stats").getConfig().getInt("all-controls") + 1);
             }
-        } catch (NullPointerException ignored) {}
+            // Control Gui
+        	else if (event.getInventory().getTitle().equals(main.getControlGUI().getTitle())) {
+        		event.setCancelled(true);
+        		
+        		if (!(event.getWhoClicked() instanceof Player))
+                	return;
+                Player cheater = (Player)event.getWhoClicked();
+        		
+        		int clickedSlot = event.getSlot();
+        		if (controlGui.isSlotEmpty(clickedSlot)) return;
+        		
+        		cheater.closeInventory();
+
+        		Player checker = Bukkit.getPlayerExact(main.getInCheck().get(cheater.getName()));
+        		controlGui.executeClick(cheater, checker, "cheater-control-gui.items." + controlGui.getSlotItemSection(clickedSlot));
+        	}
+        } catch (NullPointerException ignored) { }
     }
 
     /**
@@ -114,10 +139,10 @@ public class ListenerControlHacker implements Listener {
      * @param option - "clean/admission-refusal/hack"
      * @param numberConfig - "third/first/second"
      */
-    private void executeClick(Player checker, Player target, String option, String numberConfig) {
+    private void executeFinishGuiClick(Player checker, Player target, String option, String numberConfig) {
     	String checkerName = checker.getName();
-        new FileManager(checkerName, "stats").set("all-controls", new FileManager(checkerName, "stats").getConfig().getInt("all-controls")+1);
-        new FileManager(checkerName, "stats").set(option, new FileManager(checkerName, "stats").getConfig().getInt(option)+1);
+        new FileManager(checkerName, "stats").set("all-controls", new FileManager(checkerName, "stats").getConfig().getInt("all-controls") + 1);
+        new FileManager(checkerName, "stats").set(option, new FileManager(checkerName, "stats").getConfig().getInt(option) + 1);
         // Teleport cheater to spawn
         target.teleport(new CommandFuctions().getZone("end"));
 
@@ -125,25 +150,54 @@ public class ListenerControlHacker implements Listener {
         target.setAllowFlight(false);
 
         // Reset title
-        if (!main.getServer().getBukkitVersion().contains("1.7"))
+        if (main.rightVersion())
         	main.getTitle().sendTitle(target, "a", 1, 1, 1);
         
-        String configPath = "finish-" + numberConfig + "option";
+        String configPath = "finish-" + numberConfig + "-option";
         // Dispatch commands
         for (String command : main.getConfig().getStringList(configPath + ".commands")){
-        	main.getServer().dispatchCommand(getCmdsExecutor(configPath, checker), command
+        	main.getServer().dispatchCommand(getCmdsExecutor(configPath + ".cmdsExecutor", checker), command
         			.replace("%cheater%", target.getName()) // non c'è bisogno di usare le regex
         			.replace("%checker%", checkerName));
         }
     }
     
-    private CommandSender getCmdsExecutor(String configPath, Player checker){
-    	String configExecutor = main.getConfig().getString(configPath + ".cmdsExecutor");
+    public static CommandSender getCmdsExecutor(String configPath, Player player){
+    	String configExecutor = Main.getInstance().getConfig().getString(configPath);
     	// the onEnable already checks is the executor is different from "player" or "console" (non case-sentitive)
-    	if (configExecutor.equalsIgnoreCase("player")){
-        	return checker;
+    	if (configExecutor.equalsIgnoreCase("checker")){
+        	return player;
+    	} else if (configExecutor.equalsIgnoreCase("console")) {
+    		return Bukkit.getConsoleSender();
     	}
+    	Main.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.RED
+    			+"ControlHacker ERROR! Invalid command executor in config.yml. ('" + configPath + "')\n"
+    					+ "using CONSOLE as command executor");
        	return Bukkit.getConsoleSender();
+    }
+    
+    /**
+     * Prevent players from closing "Control Gui"
+     * @param event
+     */
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+    	if (!(event.getPlayer() instanceof Player) || !event.getInventory().getTitle().equals(controlGui.getTitle()))
+    		return;
+    	
+    	Player player = (Player) event.getPlayer();
+    	
+    	new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (main.getControlGUI().getCanCloseGui().contains(player)) {
+					main.getControlGUI().getCanCloseGui().remove(player);
+				} else {
+					controlGui.openGui(player);
+				}
+			}
+		}.runTaskLaterAsynchronously(main, 1);
+    	
     }
     
     @EventHandler
@@ -220,7 +274,7 @@ public class ListenerControlHacker implements Listener {
      * @param value - Value
      * @return String
      */
-    private String getKeyFromValue(Map hm, String value) {
+    public static String getKeyFromValue(Map hm, String value) {
         for (Object o : hm.keySet()) {
             if (hm.get(o).equals(value)) {
                 return (String) o;

@@ -35,20 +35,25 @@ public class CommandControl implements CommandExecutor {
             commandSender.sendMessage(main.format(commandFuctions.getString("usage-control")));
             return false;
         }
-
+        
+        String targetName = strings[0];
+        
         // Check if commandSender and target is equal
-        if (!commandFuctions.checkYourself(commandSender, strings[0]))
+        if (!commandFuctions.checkYourself(commandSender, targetName))
             return false;
 
         // Check if target is online
-        if (!commandFuctions.foundPlayer(commandSender, strings[0]))
+        if (!commandFuctions.foundPlayer(commandSender, targetName))
             return false;
 
+        if (commandFuctions.alreadyInCheck(commandSender, targetName))
+        	return false;
+        
         // Check if zones are set
         if (!commandFuctions.isSet("cheater") || !commandFuctions.isSet("checker"))
             return false;
 
-        Player target = Bukkit.getPlayerExact(strings[0]);
+        Player target = Bukkit.getPlayerExact(targetName);
 
         // Teleport cheater and checker to zone
         target.teleport(commandFuctions.getZone("cheater"));
@@ -57,17 +62,16 @@ public class CommandControl implements CommandExecutor {
         // Check if version is 1.8+
         if (main.rightVersion()) {
             // Title
-            main.getTitle().sendTitle(target, commandFuctions.getString("title.title-message"), 2, 99999, 2);
-            main.getTitle().sendSubtitle(target, commandFuctions.getString("title.subtitle-message").replaceAll("%player%", commandSender.getName()), 2, 99999, 2);
+            main.getTitle().sendTitle(target, commandFuctions.getString("title.title-message"), 2, Integer.MAX_VALUE, 2);
+            main.getTitle().sendSubtitle(target, commandFuctions.getString("title.subtitle-message").replace("%player%", commandSender.getName()), 2, 99999, 2);
         }
 
         // Clear previous chat
         for (int i=0; i<150; i++)
             target.sendMessage("");
-
-        for (String message : main.getConfig().getStringList("cheater-message"))
-            target.sendMessage(main.format(message.replaceAll("%player%", commandSender.getName())));
-        commandSender.sendMessage(main.format(commandFuctions.getString("checker-message").replaceAll("%player%", strings[0])));
+        
+        // Send Messages
+        commandSender.sendMessage(main.format(commandFuctions.getString("checker-start-message").replace("%player%", strings[0])));
 
         // The API of sound from 1.9 has changed, so check what sound to use
         if (Bukkit.getBukkitVersion().contains("1.7") || Bukkit.getBukkitVersion().contains("1.8")) {
@@ -86,7 +90,7 @@ public class CommandControl implements CommandExecutor {
         	effectName = "FLAME";
         }
         
-        for(int i = 0; i <360; i+=5){
+        for (int i = 0; i < 360; i += 5) {
             target.getLocation().setY(target.getLocation().getY() + Math.cos(i)*5);
            	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.valueOf(effectName), 51);
         }
@@ -94,7 +98,11 @@ public class CommandControl implements CommandExecutor {
         // Put checker and cheater to "inCheck" hashMap
         main.getInCheck().put(target.getName(), commandSender.getName());
 
+        // Open the Control Gui (for the cheater)
+        main.getControlGUI().openGui(target);
+        
         return true;
     }
+    
 
 }

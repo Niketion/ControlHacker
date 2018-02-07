@@ -51,7 +51,7 @@ public class CommandFuctions {
         if (new FileManager("location", "locations").getConfig().getString(zone.toUpperCase()+".world") != null) {
             return true;
         } else {
-            Bukkit.broadcastMessage(ChatColor.DARK_PURPLE+zone.toUpperCase()+" isn't set. (Please contact a admin /ch)");
+            Bukkit.broadcastMessage(ChatColor.DARK_PURPLE+zone.toUpperCase()+" location isn't set. (Please contact a admin /ch)");
             return false;
         }
     }
@@ -89,7 +89,7 @@ public class CommandFuctions {
         if (Bukkit.getPlayerExact(namePlayer) != null) {
             return true;
         } else {
-            commandSender.sendMessage(main.format(getString("player-not-found").replaceAll("%player%", namePlayer)));
+            commandSender.sendMessage(main.format(getString("player-not-found").replace("%player%", namePlayer)));
             return false;
         }
     }
@@ -105,13 +105,25 @@ public class CommandFuctions {
             if (commandSender.getName().equals(namePlayer)) {
                 commandSender.sendMessage(main.format(getString("check-yourself.message")));
                 return false;
-            } else {
-                return true;
             }
         }
         return true;
     }
 
+    /**
+     * Check wether the player is already in check
+     * @param commandSender - CommandSender
+     * @param targetName - Target
+     * @return
+     */
+    boolean alreadyInCheck(CommandSender commandSender, String targetName) {
+    	if (main.getInCheck().containsKey(targetName)) {
+    		commandSender.sendMessage(main.format(getString("is-already-in-check").replace("%player%", targetName)));
+    		return true;
+    	}
+    	return false;
+    }
+    
     /**
      * Get zone from location.yml
      * @param nameZone - Name of zone to get
@@ -136,48 +148,33 @@ public class CommandFuctions {
             main.getInCheck().remove(target.getName());
 
             // Reset title
-            if (!main.rightVersion()) {
+            if (main.rightVersion()) {
                 main.getTitle().sendTitle(target, "a", 1, 1, 1);
             }
 
             // Teleport cheater to spawn
-            target.teleport(getZone("end"));
-
+            Location spawn = target.getWorld().getSpawnLocation();
+            if (getZone("end") != null) 
+            	target.teleport(getZone("end"));
+            target.teleport(spawn);
+            
             // Disable fly
             target.setAllowFlight(false);
-
+            
+            // Send Messages
             target.sendMessage(main.format(main.getConfig().getString("finish-cheater-message")));
             commandSender.sendMessage(main.format(main.getConfig().getString("finish-checker-message").replaceAll("%player%", target.getName())));
         } else {
             // Reset title
-            if (!main.rightVersion()) {
+            if (main.rightVersion()) {
                 // If version was changed or the client is a fork
                 try {
                     main.getTitle().sendTitle(target, "a", 1, 1, 1);
                 } catch (NullPointerException ignored) {}
             }
-
-            ((Player) commandSender).openInventory(GUIFinish(target));
+            
+            main.getFinishGUI().openGui((Player) commandSender);
         }
     }
 
-    private ItemStack itemStack(int data, String option) {
-        ItemStack itemStack = new ItemStack(Material.STAINED_CLAY, 1, (short) data);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        itemMeta.setDisplayName(main.format(getString("finish-"+option+"-option.display-name")));
-        itemStack.setItemMeta(itemMeta);
-
-        return itemStack;
-    }
-
-    private Inventory GUIFinish(Player target) {
-        Inventory GUI = Bukkit.createInventory(null, 9, "Finish "+target.getName());
-
-        GUI.setItem(1, itemStack(4, "first"));
-        GUI.setItem(4, itemStack(14, "second"));
-        GUI.setItem(7, itemStack(5, "third"));
-
-        return GUI;
-    }
 }

@@ -37,7 +37,7 @@ public class CommandFinish implements CommandExecutor {
 
         // Check if zone are set
         if (!commandFuctions.isSet("end")) {
-            return false;
+//            return false;
         }
 
         // Check if target is in "inCheck" hashmap to key cheater
