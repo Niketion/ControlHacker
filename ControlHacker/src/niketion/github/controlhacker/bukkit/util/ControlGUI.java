@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -33,13 +35,23 @@ public class ControlGUI {
 	private List<Player> canCloseGui = new ArrayList<>();
 	
 	public ControlGUI() {
-		FileConfiguration config = main.getConfig();
-		controlGui = Bukkit.createInventory(null, config.getInt("cheater-control-gui.size"), guiTitle);
-		
-		for (String path : config.getConfigurationSection("cheater-control-gui.items").getKeys(false)) {
-			int slot = config.getInt("cheater-control-gui.items." + path + ".slot");
-			controlGui.setItem(slot, createItem(path));
-			slots.put(slot, path);
+		try {
+			FileConfiguration config = main.getConfig();
+			controlGui = Bukkit.createInventory(null, config.getInt("cheater-control-gui.size"), guiTitle);
+			
+			for (String path : config.getConfigurationSection("cheater-control-gui.items").getKeys(false)) {
+				int slot = config.getInt("cheater-control-gui.items." + path + ".slot");
+				controlGui.setItem(slot, createItem(path));
+				slots.put(slot, path);
+			}
+		} catch (Exception e) {
+			ConsoleCommandSender consoleCommandSender = main.getServer().getConsoleSender();
+			consoleCommandSender.sendMessage(ChatColor.RED + getChatSeparator('=', 50));
+			consoleCommandSender.sendMessage(ChatColor.RED+"There is something wrong with your \"cheater-control-gui\" configuration");
+			consoleCommandSender.sendMessage(ChatColor.RED+"This is a fatal error!");
+			consoleCommandSender.sendMessage(ChatColor.RED+"Disabling plugin...");
+			consoleCommandSender.sendMessage(ChatColor.RED + getChatSeparator('=', 50));
+			main.getServer().getPluginManager().disablePlugin(main);
 		}
 	}
 	
@@ -54,6 +66,14 @@ public class ControlGUI {
 		
 		item.setItemMeta(itemMeta);
 		return item;
+	}
+	
+	private String getChatSeparator(char character, int length) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			stringBuilder.append(character);
+		}
+		return stringBuilder.toString();
 	}
 	
 	/**
@@ -83,7 +103,6 @@ public class ControlGUI {
 	
 	// Click
 	public void executeClick(Player cheater, Player checker, String clickedItemConfigSectionName) {
-		
 		executeAction(cheater, checker, clickedItemConfigSectionName);
 		
 		dispatchCommands(ListenerControlHacker.getCmdsExecutor(clickedItemConfigSectionName + ".commands.executor", checker),
@@ -91,14 +110,6 @@ public class ControlGUI {
 		
 		// Allow the "cheater" to close the "control gui"
 		canCloseGui.add(cheater);
-	}
-	
-	private void dispatchCommands(CommandSender cmdSender, List<String> commands, Player cheater, Player checker) {
-		for (String command : commands){
-        	main.getServer().dispatchCommand(cmdSender, command
-        			.replace("%cheater%", cheater.getName())
-        			.replace("%checker%", checker.getName()));
-        }
 	}
 	
 	private void executeAction(Player cheater, Player checker, String clickedItemConfigSectionName) {
@@ -117,6 +128,14 @@ public class ControlGUI {
 		cheater.setAllowFlight(false);
 		
 		main.getInCheck().remove(ListenerControlHacker.getKeyFromValue(main.getInCheck(), checker.getName()));
+	}
+	
+	private void dispatchCommands(CommandSender cmdSender, List<String> commands, Player cheater, Player checker) {
+		for (String command : commands){
+        	main.getServer().dispatchCommand(cmdSender, command
+        			.replace("%cheater%", cheater.getName())
+        			.replace("%checker%", checker.getName()));
+        }
 	}
 	
 	// Util

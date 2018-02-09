@@ -57,10 +57,11 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (main.getInCheck().containsKey(event.getPlayer().getName())) {
+        // Cheater
+    	if (main.getInCheck().containsKey(event.getPlayer().getName())) {
             new FileManager("playerquit", "playerquit").add("list", event.getPlayer().getName());
             // Notify the entire staff that a player under control has come out
-            new CommandFuctions().finishControl(event.getPlayer(), Bukkit.getConsoleSender());
+            new CommandFuctions().finishControl(event.getPlayer(), Bukkit.getPlayerExact(main.getInCheck().get(event.getPlayer().getName())));
             
             // Remove the player from the list of players who can close the "control gui"
             if (main.getControlGUI().getCanCloseGui().contains(event.getPlayer()))
@@ -77,6 +78,11 @@ public class ListenerControlHacker implements Listener {
                     if (players.hasPermission(Permissions.CONTROL.toString()))
                         players.sendMessage(main.format(main.getConfig().getString("cheater-is-quit")).replaceAll("%player%", event.getPlayer().getName()));
         }
+    	// Checker
+        else if (main.getInCheck().containsValue(event.getPlayer().getName())) {
+        	Player cheater = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getPlayer().getName()));
+        	new CommandFuctions().finishControl(cheater, main.getServer().getConsoleSender());
+        }
     }
 
     @EventHandler
@@ -87,12 +93,12 @@ public class ListenerControlHacker implements Listener {
                 event.setCancelled(true);
                 event.setResult(Event.Result.DENY);
 
-                String data = event.getCurrentItem().getData().toString();
-                Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
-
                 if (!(event.getWhoClicked() instanceof Player))
                 	return;
                 Player checker = (Player)event.getWhoClicked();
+                
+                String data = event.getCurrentItem().getData().toString();
+                Player target = Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getWhoClicked().getName()));
                 
                 if (data.contains("14")) {
                     executeFinishGuiClick(checker, target, "hack", "second");
@@ -107,6 +113,7 @@ public class ListenerControlHacker implements Listener {
                 } else {
                 	return;
                 }
+                
                 checker.closeInventory();
                 
                 // Remove from HashMap
@@ -116,11 +123,18 @@ public class ListenerControlHacker implements Listener {
             // Control Gui
         	else if (event.getInventory().getTitle().equals(main.getControlGUI().getTitle())) {
         		event.setCancelled(true);
+        		event.setResult(Event.Result.DENY);
         		
         		if (!(event.getWhoClicked() instanceof Player))
                 	return;
                 Player cheater = (Player)event.getWhoClicked();
         		
+                // Return if the player is not in check
+                if (main.getInCheck().get(cheater.getName()) == null) {
+                	cheater.closeInventory();
+                	return;
+                }
+                
         		int clickedSlot = event.getSlot();
         		if (controlGui.isSlotEmpty(clickedSlot)) return;
         		
@@ -185,8 +199,10 @@ public class ListenerControlHacker implements Listener {
     	if (!(event.getPlayer() instanceof Player) || !event.getInventory().getTitle().equals(controlGui.getTitle()))
     		return;
     	
-    	Player player = (Player) event.getPlayer();
+    	// Useful when the checker slog during a control
+    	if (!main.getInCheck().containsKey(event.getPlayer().getName())) return;
     	
+    	Player player = (Player) event.getPlayer();
     	new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -245,14 +261,17 @@ public class ListenerControlHacker implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
-        if (main.getInCheck().containsKey(event.getPlayer().getName())) {
+        // Cheater
+    	if (main.getInCheck().containsKey(event.getPlayer().getName())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(getString(event.getMessage(), event.getPlayer()));
-            Bukkit.getPlayerExact(main.getInCheck().get(event.getPlayer().getName())).getPlayer().sendMessage(getString(event.getMessage(), event.getPlayer()));
-        } else if (main.getInCheck().containsValue(event.getPlayer().getName())) {
+            Bukkit.getPlayerExact(main.getInCheck().get(event.getPlayer().getName())).sendMessage(getString(event.getMessage(), event.getPlayer()));
+        } 
+        // Checker
+        else if (main.getInCheck().containsValue(event.getPlayer().getName())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(getString(event.getMessage(), event.getPlayer()));
-            Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getPlayer().getName())).getPlayer().sendMessage(getString(event.getMessage(), event.getPlayer()));
+            Bukkit.getPlayerExact(getKeyFromValue(main.getInCheck(), event.getPlayer().getName())).sendMessage(getString(event.getMessage(), event.getPlayer()));
         }
     }
 

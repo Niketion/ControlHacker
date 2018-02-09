@@ -4,11 +4,14 @@ import niketion.github.controlhacker.bukkit.Main;
 import niketion.github.controlhacker.bukkit.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandControl implements CommandExecutor {
 
@@ -89,12 +92,18 @@ public class CommandControl implements CommandExecutor {
         } else {
         	effectName = "FLAME";
         }
+        Location targetLocation = target.getLocation();
+        World targetWorld = targetLocation.getWorld();
+        new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i < 360; i += 5) {
+//					targetLocation.setY(targetLocation.getY() + Math.cos(i)*5);
+		           	targetWorld.playEffect(targetLocation, Effect.valueOf(effectName), 51);
+		        }
+			}
+		}.runTaskAsynchronously(main);
         
-        for (int i = 0; i < 360; i += 5) {
-            target.getLocation().setY(target.getLocation().getY() + Math.cos(i)*5);
-           	target.getLocation().getWorld().playEffect(target.getLocation(), Effect.valueOf(effectName), 51);
-        }
-
         // Put checker and cheater to "inCheck" hashMap
         main.getInCheck().put(target.getName(), commandSender.getName());
 

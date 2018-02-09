@@ -132,7 +132,8 @@ public class Main extends JavaPlugin {
                 }
         
         // Clear the list of players who can close the "control gui"
-        getControlGUI().getCanCloseGui().clear();
+        if (controlGui != null)
+        	getControlGUI().getCanCloseGui().clear();
     }
 
     /**

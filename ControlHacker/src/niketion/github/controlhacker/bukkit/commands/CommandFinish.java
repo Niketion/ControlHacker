@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CommandFinish implements CommandExecutor {
 
@@ -46,7 +47,7 @@ public class CommandFinish implements CommandExecutor {
             return false;
         }
 
-        commandFuctions.finishControl(Bukkit.getPlayerExact(strings[0]), commandSender);
+        commandFuctions.finishControl(Bukkit.getPlayerExact(strings[0]), (Player) commandSender);
         return true;
     }
 }

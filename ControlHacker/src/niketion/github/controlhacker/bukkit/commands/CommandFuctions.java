@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandFuctions {
 
@@ -144,19 +145,17 @@ public class CommandFuctions {
      */
     public void finishControl(Player target, CommandSender commandSender) {
         if (main.getConfig().getBoolean("old-finish") || !(commandSender instanceof Player)) {
-            // Remove from HashMap
-            main.getInCheck().remove(target.getName());
-
             // Reset title
             if (main.rightVersion()) {
                 main.getTitle().sendTitle(target, "a", 1, 1, 1);
             }
 
             // Teleport cheater to spawn
-            Location spawn = target.getWorld().getSpawnLocation();
-            if (getZone("end") != null) 
+            try {
             	target.teleport(getZone("end"));
-            target.teleport(spawn);
+			} catch (NullPointerException e) {
+				target.teleport(target.getWorld().getSpawnLocation());
+			}
             
             // Disable fly
             target.setAllowFlight(false);
@@ -173,8 +172,12 @@ public class CommandFuctions {
                 } catch (NullPointerException ignored) {}
             }
             
-            main.getFinishGUI().openGui((Player) commandSender);
+            // Open FinishGui
+            if (target.isOnline())
+            	main.getFinishGUI().openGui((Player) commandSender);
         }
+        // Close ControlGui inventory if still open
+        target.closeInventory();
     }
 
 }

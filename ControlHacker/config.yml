@@ -14,7 +14,7 @@ player-not-found: "&c%player% not found..."
 stats-not-found: "&cStats of %player% not found..."
 is-not-in-check: "&c%player% isn't in a check"
 is-already-in-check: "&c%player% is already in check!"
-cheater-is-quit: "&4&l[!!!] &c%player% is quit from a control."
+cheater-is-quit: "&4&l[!!!] &c%player% quit during a control."
 check-yourself:
  enabled: false
  message: "&cYou can't check yourself."
@@ -27,7 +27,7 @@ cheater-message:
  - ""
  - "&7Give id skype/teamviewer/anydesk"
  - "&7to checker (%player%)"
- - "&cDON'T LOGOUT or you'll be banned!"
+ - "&cDON'T DISCONNECT or you'll be banned!"
 
 old-finish: false # I would recommend using the new version
 finish-cheater-message: "&aThanks for the pacience, control finished."
