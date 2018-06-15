@@ -11,27 +11,32 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.plugin.EventExecutor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-public class ListenerControlHacker implements Listener {
+public class ListenerControlHacker implements Listener, EventExecutor {
 
     private Main main = Main.getInstance();
     private ControlGUI controlGui = main.getControlGUI();
-    
+
+    public void execute(Listener listener, Event e) throws EventException
+    {
+        org.apache.commons.lang.Validate.isTrue(e instanceof AsyncPlayerChatEvent, "Event must be chat event!");
+
+        onAsyncPlayerChat((AsyncPlayerChatEvent)e);
+    }
+
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         for (String command : main.getConfig().getStringList("event.command-whitelisted")) {
@@ -148,7 +153,6 @@ public class ListenerControlHacker implements Listener {
 
     /**
      * Compact for click event
-     * @param nameChecker - Name of checker
      * @param target - Cheater
      * @param option - "clean/admission-refusal/hack"
      * @param numberConfig - "third/first/second"
@@ -171,7 +175,7 @@ public class ListenerControlHacker implements Listener {
         // Dispatch commands
         for (String command : main.getConfig().getStringList(configPath + ".commands")){
         	main.getServer().dispatchCommand(getCmdsExecutor(configPath + ".cmdsExecutor", checker), command
-        			.replace("%cheater%", target.getName()) // non c'è bisogno di usare le regex
+        			.replace("%cheater%", target.getName()) // non c'ï¿½ bisogno di usare le regex
         			.replace("%checker%", checkerName));
         }
     }
