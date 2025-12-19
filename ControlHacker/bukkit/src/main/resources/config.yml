@@ -1,0 +1,80 @@
+messages:
+  prefix: "&c[Control]"
+  control-start-staff: "&aHai portato %player% in controllo."
+  control-start-player:
+    - "&cSei in controllo da %staff%."
+    - "&7Attendi istruzioni dallo staff."
+  control-finish-staff: "&aControllo terminato per %player%."
+  control-finish-player: "&aControllo terminato. Sei libero."
+  player-not-found: "&cGiocatore non trovato."
+  already-controlled: "&c%player% è già in controllo."
+  not-controlled: "&c%player% non è in controllo."
+  no-permission: "&cNon hai il permesso."
+  open-finish-gui: "&7Scegli un'azione per concludere il controllo."
+  action-not-found: "&cAzione non trovata."
+  actions-list-header: "&eAzioni disponibili:"
+  action-line: "&7- %id%: %name%"
+  stats-header: "&eStatistiche di %staff%"
+  stats-line-started: "&7Controlli avviati: &f%value%"
+  stats-line-completed: "&7Controlli conclusi: &f%value%"
+  stats-line-banned: "&7Ban eseguiti: &f%value%"
+  top-header: "&eTop staffer"
+  top-line: "&7#%position% &f%staff% &7(%value%)"
+
+title:
+  enabled: true
+  title: "&cCONTROL"
+  subtitle: "&7by %staff%"
+  fade-in: 10
+  stay: 60
+  fade-out: 10
+
+control:
+  world: "world"
+  x: 0
+  y: 80
+  z: 0
+  yaw: 0
+  pitch: 0
+  start-commands:
+    - "effect give %player% minecraft:slowness 9999 10 true"
+  quit-commands:
+    - "ban %player% Disconnessione durante il controllo"
+
+restrictions:
+  stop-move: true
+  stop-command: true
+  command-whitelist:
+    - "/msg"
+  stop-chat: true
+  stop-drop: true
+  stop-break: true
+  stop-place: true
+  stop-damage: true
+  stop-interact: true
+
+gui:
+  title: "&c&lAzioni controllo"
+  size: 27
+
+actions:
+  ban:
+    display-name: "&c&lBan"
+    material: "RED_WOOL"
+    slot: 11
+    type: "BAN"
+    executor: "CONSOLE"
+    lore:
+      - "&7Banna il giocatore."
+    commands:
+      - "ban %player% Controllo fallito (%staff%)"
+  release:
+    display-name: "&a&lRilascia"
+    material: "LIME_WOOL"
+    slot: 15
+    type: "RELEASE"
+    executor: "CONSOLE"
+    lore:
+      - "&7Rilascia il giocatore."
+    commands:
+      - "tell %player% Controllo terminato, grazie."

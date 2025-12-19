@@ -1,0 +1,9 @@
+{
+  "id": "controlhacker",
+  "name": "ControlHacker",
+  "version": "2.0.0",
+  "main": "com.controlhacker.velocity.ControlHackerVelocityPlugin",
+  "description": "Sistema di controllo con server dedicato",
+  "authors": ["Niketion", "OpenAI"],
+  "dependencies": []
+}
